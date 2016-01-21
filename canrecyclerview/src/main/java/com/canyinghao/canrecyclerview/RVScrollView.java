@@ -6,9 +6,7 @@ import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.widget.ScrollView;
 
-/**
- * Created by yangjian on 15/12/28.
- */
+
 public class RVScrollView extends ScrollView {
 
     private int downX;

@@ -6,9 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by yangjian on 15/12/28.
- */
+
 public class FullyGridLayoutManager extends GridLayoutManager {
 
     private int mwidth = 0;

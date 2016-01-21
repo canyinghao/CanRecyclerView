@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
                             public void onRVItemClick(ViewGroup parent, View itemView, int position) {
 
                                 adapterItem.removeItem(position);
-                                App.getInstance().show("deleteItem:" + position );
+                                App.getInstance().show("deleteItem:" + position);
 
                             }
 

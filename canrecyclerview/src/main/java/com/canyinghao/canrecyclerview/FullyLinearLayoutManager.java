@@ -7,9 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by yangjian on 15/12/28.
- */
+
 public class FullyLinearLayoutManager extends LinearLayoutManager {
 
     private static final String TAG = FullyLinearLayoutManager.class.getSimpleName();

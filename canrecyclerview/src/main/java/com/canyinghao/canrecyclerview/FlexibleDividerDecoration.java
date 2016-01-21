@@ -14,9 +14,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-/**
- * Created by yqritc on 2015/01/08.
- */
+
 public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecoration {
 
     private static final int DEFAULT_SIZE = 2;
