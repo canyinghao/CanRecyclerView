@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CanRecyclerView</string>
+
+
+    <array name="array_list">
+        <item>RecyclerView</item>
+        <item>Empty</item>
+        <item>Grid</item>
+        <item>List</item>
+
+
+
+    </array>
+</resources>

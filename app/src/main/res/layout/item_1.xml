@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.canyinghao.canrecyclerview.RVScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/scrollView"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher" />
+
+
+        <com.canyinghao.canrecyclerview.RecyclerViewEmpty
+            android:id="@+id/rv_item1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        </com.canyinghao.canrecyclerview.RecyclerViewEmpty>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher" />
+
+    </LinearLayout>
+
+</com.canyinghao.canrecyclerview.RVScrollView>
