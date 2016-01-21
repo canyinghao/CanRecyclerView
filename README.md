@@ -1,157 +1,207 @@
-# CanAdapter
-一个继承BaseAdapter和RecyclerView.Adapter的库，将Adapter封装成相同的方法，方便使用。
+# CanRecyclerView
+一个RecyclerView的扩展使用库。可以扩展为viewpager使用，可以使其不可滚动，嵌入scrollvew中使用，等等。
+
+此项目参考了[RecyclerViewPager](https://github.com/lsjwzh/RecyclerViewPager)。
 
 
-此项目参考了[BGAAdapter-Android](https://github.com/bingoogolapple/BGAAdapter-Android)。
-
-
-![](./pic/CanAdapter.gif)  
+![](./pic/CanRecyclerView.gif)  
 
 
 ## 使用方式 
-**1. CanAdapter介绍**  
-ListView使用CanAdapter，RecyclerView使用CanRVAdapter，主要重写它们的三个方法，构造函数、setView、setItemListener这三个。setItemListener的目的是让事件可以在activity中处理，方便adapter的重用。使用adapter.setOnItemListener就可以在activity中处理事件，总共5个事件，onItemChildClick、onItemChildLongClick、onItemChildCheckedChanged、onRVItemClick、onRVItemLongClick。
+**1.CanRecyclerView**  
+CanRecyclerViewPager是用RecyclerView实现的ViewPager，主要方法setOnePage是否只滑动一页，setFriction设置摩擦系数，addScaleListener其中传入一个浮点型，使其有缩放效果，setTabLayoutSupport方法可使其支持TabLayout。
+RecyclerViewEmpty是一个可监听RecyclerView是否为空的扩展实现。主要方法setEmptyView(View emptyView)，在adapter为空时可显示emptyView。
 
 
-**2. ListView 使用CanAdapter**  
+**2.代码示例**  
+Demo中使用了[CanAdapter](https://github.com/canyinghao/CanAdapter)，使用方式请自行查阅。
 ```JAVA
-public class ListViewFragment extends Fragment {
-    ListView listView;
+public class MainActivity extends Activity {
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.tabLayout)
+    TabLayout tabLayout;
+    @Bind(R.id.viewpager)
+    CanRecyclerViewPager viewpager;
 
-    @Nullable
+    Activity context;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        context = this;
+        toolbar.setTitle(R.string.app_name);
 
-        listView = new ListView(getContext());
 
+        initViewPager();
+    }
 
-        final CanAdapter adapter = new CanAdapter<MainBean>(getContext(), R.layout.item_main) {
+    protected void initViewPager() {
 
+        final int[] colors = {R.color.report_color1, R.color.report_color2, R.color.report_color3, R.color.report_color4};
+        viewpager = (CanRecyclerViewPager) findViewById(R.id.viewpager);
+        LinearLayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
+                false);
+        viewpager.setLayoutManager(layout);
+        CanRVAdapter adapter = new CanRVAdapter<MainBean>(viewpager, R.layout.item_main) {
 
             @Override
-            protected void setView(CanHolderHelper helper, int position, MainBean model) {
-                helper.setText(R.id.tv_title, model.title);
-                helper.setText(R.id.tv_content, model.content);
+            protected void setView(CanHolderHelper helper, int i, MainBean bean) {
+                helper.getConvertView().setBackgroundResource(colors[i]);
 
-            }
-
-            @Override
-            protected void setItemListener(CanHolderHelper helper) {
-
-                helper.setItemChildClickListener(R.id.tv_title);
-                helper.setItemChildClickListener(R.id.tv_content);
-
-            }
-        };
-
-        listView.setAdapter(adapter);
+                if (i == 0 || i == 1) {
+                    helper.setVisibility(R.id.scrollView, View.GONE);
+                    helper.setVisibility(R.id.rv_item2, View.VISIBLE);
+                } else {
+                    helper.setVisibility(R.id.scrollView, View.VISIBLE);
+                    helper.setVisibility(R.id.rv_item2, View.GONE);
+                }
 
 
-        adapter.setOnItemListener(new CanOnItemListener() {
+                final CanRVAdapter adapterItem = new CanRVAdapter<MainBean>(viewpager, R.layout.item_3) {
 
-            public void onItemChildClick(View view, int position) {
+                    @Override
+                    protected void setView(CanHolderHelper helper, int i, MainBean bean) {
 
-                MainBean bean = (MainBean) adapter.getItem(position);
-                switch (view.getId()) {
+                        helper.setText(R.id.tv_title, bean.mText);
+                        helper.setText(R.id.tv_content, bean.mText);
+                    }
+
+                    @Override
+                    protected void setItemListener(CanHolderHelper helper) {
+
+                    }
+                };
+
+                for (int j = 0; j < 20; j++) {
+                    adapterItem.addLastItem(new MainBean("this is itme " + j));
+                }
 
 
-                    case R.id.tv_title:
+                RecyclerViewEmpty rv_item1 = helper.getView(R.id.rv_item1);
+                RecyclerViewEmpty rv_item2 = helper.getView(R.id.rv_item2);
 
-                        App.getInstance().show(bean.title);
+                LinearLayoutManager layout = null;
+
+                switch (i) {
+
+                    case 0:
+                        layout = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL,
+                                false);
+
+                        rv_item2.setLayoutManager(layout);
+                        rv_item2.addItemDecoration(new HorizontalDividerItemDecoration.Builder(context).colorResId(R.color.line).size(10).showLastDivider().build());
+                        rv_item2.setEmptyView(helper.getView(R.id.empty));
+                        rv_item2.setAdapter(adapterItem);
+                        adapterItem.setOnItemListener(new CanOnItemListener() {
+                            public void onRVItemClick(ViewGroup parent, View itemView, int position) {
+
+                                adapterItem.removeItem(position);
+                                App.getInstance().show("deleteItem:" + position);
+
+                            }
+
+
+                        });
                         break;
+                    case 1:
 
-                    case R.id.tv_content:
-                        App.getInstance().show(bean.content);
+                        layout = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL,
+                                false);
+                        rv_item2.setLayoutManager(layout);
+                        rv_item2.addItemDecoration(new HorizontalDividerItemDecoration.Builder(context).colorResId(R.color.line).size(5).showLastDivider().build());
+                        rv_item2.setEmptyView(helper.getView(R.id.empty));
+                        rv_item2.setAdapter(adapterItem);
+
+                        adapterItem.clear();
+                        adapterItem.addLastItem(new MainBean("点击删除"));
+                        adapterItem.setOnItemListener(new CanOnItemListener() {
+                            public void onRVItemClick(ViewGroup parent, View itemView, int position) {
+
+                                adapterItem.clear();
+
+
+                            }
+
+
+                        });
+                        break;
+                    case 2:
+
+                        layout = new FullyGridLayoutManager(context,
+                                2);
+                        rv_item1.addItemDecoration(new HorizontalDividerItemDecoration.Builder(context).colorResId(R.color.line).size(5).showLastDivider().build());
+                        rv_item1.addItemDecoration(new VerticalDividerItemDecoration.Builder(context).colorResId(R.color.line).size(5).showLastDivider().build());
+
+                        rv_item1.setLayoutManager(layout);
+                        rv_item1.setAdapter(adapterItem);
+                        break;
+                    case 3:
+
+                        layout = new FullyLinearLayoutManager(context, LinearLayoutManager.VERTICAL,
+                                false);
+                        rv_item1.addItemDecoration(new HorizontalDividerItemDecoration.Builder(context).colorResId(R.color.color_main).size(2).showLastDivider().build());
+
+                        rv_item1.setLayoutManager(layout);
+                        rv_item1.setAdapter(adapterItem);
                         break;
                 }
 
 
             }
 
-        });
-
-
-        adapter.setList(MainBean.getList());
-
-
-        return listView;
-    }
-
-
-}
-```
-**3. RecyclerView 使用CanRVAdapter**  
-```JAVA
-public class RVListFragment extends Fragment {
-
-    RecyclerView recyclerView;
-
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        recyclerView = new RecyclerView(getContext());
-
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(mLayoutManager);
-
-        final CanRVAdapter adapter = new CanRVAdapter<MainBean>(recyclerView, R.layout.item_main) {
-
-
-            @Override
-            protected void setView(CanHolderHelper helper, int position, MainBean model) {
-                helper.setText(R.id.tv_title, model.title);
-                helper.setText(R.id.tv_content, model.content);
-
-            }
-
             @Override
             protected void setItemListener(CanHolderHelper helper) {
 
-                helper.setItemChildClickListener(R.id.tv_title);
-                helper.setItemChildClickListener(R.id.tv_content);
-
             }
+
+
         };
+        adapter.setRatio(1);
 
-        recyclerView.setAdapter(adapter);
+        viewpager.setAdapter(adapter);
 
+        viewpager.setHasFixedSize(true);
+        viewpager.setLongClickable(true);
+        viewpager.setOnePage(true);
+        viewpager.addScaleListener(0.9f);
 
-        adapter.setOnItemListener(new CanOnItemListener() {
-
-            public void onItemChildClick(View view, int position) {
-
-                MainBean bean = (MainBean) adapter.getItem(position);
-                switch (view.getId()) {
-
-
-                    case R.id.tv_title:
-
-                        App.getInstance().show(bean.title);
-                        break;
-
-                    case R.id.tv_content:
-                        App.getInstance().show(bean.content);
-                        break;
-                }
+        adapter.addLastItem(new MainBean("xxx"));
+        adapter.addLastItem(new MainBean("xxx"));
+        adapter.addLastItem(new MainBean("xxx"));
+        adapter.addLastItem(new MainBean("xxx"));
 
 
+        viewpager.addOnPageChangedListener(new CanRecyclerViewPager.OnPageChangedListener() {
+            @Override
+            public void OnPageChanged(int oldPosition, int newPosition) {
+                Log.e(CanRecyclerViewPager.TAG, "oldPosition:" + oldPosition + " newPosition:" + newPosition);
+                App.getInstance().show("oldPosition:" + oldPosition + " newPosition:" + newPosition);
             }
-
         });
 
 
-        adapter.setList(MainBean.getList());
+        final String[] array_list = getResources().getStringArray(R.array.array_list);
 
+        viewpager.setTabLayoutSupport(tabLayout, new CanRecyclerViewPager.ViewPagerTabLayoutAdapter() {
+            @Override
+            public String getPageTitle(int position) {
+                return array_list[position];
+            }
 
-        return recyclerView;
+            @Override
+            public int getItemCount() {
+                return array_list.length;
+            }
+        });
+
     }
-
-
 }
 ```
+
 
 
 
