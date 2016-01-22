@@ -7,6 +7,13 @@
 ![](./pic/CanRecyclerView.gif)  
 
 
+
+##添加依赖
+```JAVA
+compile 'com.canyinghao:canrecyclerview:1.0.0'
+```
+
+
 ## 使用方式 
 **1.CanRecyclerView**  
 CanRecyclerViewPager是用RecyclerView实现的ViewPager，主要方法setOnePage是否只滑动一页，setFriction设置摩擦系数，addScaleListener其中传入一个浮点型，使其有缩放效果，setTabLayoutSupport方法可使其支持TabLayout。
