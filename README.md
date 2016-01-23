@@ -1,10 +1,17 @@
 # CanRecyclerView
 一个RecyclerView的扩展使用库。可以扩展为viewpager使用，可以为RecyclerView设置emptyView，可以使其不可滚动，嵌入scrollvew中使用，等等。
 
-此项目参考了[RecyclerViewPager](https://github.com/lsjwzh/RecyclerViewPager)。
+<!--此项目参考了[RecyclerViewPager](https://github.com/lsjwzh/RecyclerViewPager)。-->
 
 
 ![](./pic/CanRecyclerView.gif)  
+
+
+
+##添加依赖
+```JAVA
+compile 'com.canyinghao:canrecyclerview:1.0.0'
+```
 
 
 ## 使用方式 
