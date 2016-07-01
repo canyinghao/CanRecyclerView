@@ -14,6 +14,8 @@ public class RecyclerViewEmpty extends RecyclerView {
 
     protected View emptyView;
 
+    protected boolean hideOrShowRV;
+
     protected AdapterDataObserver emptyObserver = new AdapterDataObserver() {
 
 
@@ -26,14 +28,20 @@ public class RecyclerViewEmpty extends RecyclerView {
                 if (adapter.getItemCount() == 0) {
                     if (emptyView != null) {
                         emptyView.setVisibility(View.VISIBLE);
-                        RecyclerViewEmpty.this.setVisibility(View.GONE);
+                        if (hideOrShowRV){
+                            RecyclerViewEmpty.this.setVisibility(View.GONE);
+                        }
+
                     }
 
 
                 } else {
                     if (emptyView != null) {
                         emptyView.setVisibility(View.GONE);
-                        RecyclerViewEmpty.this.setVisibility(View.VISIBLE);
+                        if (hideOrShowRV){
+                            RecyclerViewEmpty.this.setVisibility(View.VISIBLE);
+                        }
+
                     }
 
 
@@ -74,4 +82,11 @@ public class RecyclerViewEmpty extends RecyclerView {
     }
 
 
+    public void setHideOrShowRV(boolean hideOrShowRV) {
+        this.hideOrShowRV = hideOrShowRV;
+    }
+
+    public boolean isHideOrShowRV() {
+        return hideOrShowRV;
+    }
 }
