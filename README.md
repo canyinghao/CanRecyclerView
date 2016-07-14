@@ -10,7 +10,7 @@
 
 ##添加依赖
 ```JAVA
-compile 'com.canyinghao:canrecyclerview:1.0.1'
+compile 'com.canyinghao:canrecyclerview:1.0.2'
 ```
 
 
@@ -209,8 +209,8 @@ public class MainActivity extends Activity {
 }
 ```
 
-
-
+**3.更新日志**  
+2016.7.14  添加一个CanRecyclerViewHeaderFooter，可以给RecyclerView添加头部和底部，并且底部可以做成自动加载。
 
 
 ### 开发者
