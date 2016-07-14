@@ -1,7 +1,7 @@
 package com.canyinghao.canrecyclerviewdemo.model;
 
 /**
- * Created by yangjian on 16/1/21.
+ * Created by canyinghao on 16/1/21.
  */
 public class MainBean {
 

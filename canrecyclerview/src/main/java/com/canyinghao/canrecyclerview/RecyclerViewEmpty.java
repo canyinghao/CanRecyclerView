@@ -8,7 +8,7 @@ import android.view.View;
 
 /**
  * 可以设置EmptyView的RecyclerView，需要在布局中加入EmptyView
- * Created by yangjian on 15/6/6.
+ * Created by canyinghao on 15/6/6.
  */
 public class RecyclerViewEmpty extends RecyclerView {
 
