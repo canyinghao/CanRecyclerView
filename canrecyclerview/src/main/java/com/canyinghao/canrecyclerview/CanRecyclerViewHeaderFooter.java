@@ -145,8 +145,10 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
 
         isAttached = true;
 
+        if (decoration != null) {
+            recyclerView.removeItemDecoration(decoration);
+        }
         decoration = new CanItemDecoration(layoutManager).setIsHeader(isHeader);
-
         recyclerView.addItemDecoration(decoration);
 
         recyclerView.removeOnScrollListener(onScrollListener);
