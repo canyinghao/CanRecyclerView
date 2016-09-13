@@ -19,7 +19,7 @@ import com.canyinghao.canrecyclerview.HorizontalDividerItemDecoration;
 import com.canyinghao.canrecyclerview.RecyclerViewEmpty;
 import com.canyinghao.canrecyclerview.VerticalDividerItemDecoration;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -29,19 +29,19 @@ import butterknife.OnClick;
 public class HeaderFooterActivity extends AppCompatActivity implements CanRecyclerViewHeaderFooter.OnLoadMoreListener {
 
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.can_content_view)
+    @BindView(R.id.can_content_view)
     RecyclerViewEmpty recycler;
-    @Bind(R.id.header)
+    @BindView(R.id.header)
     CanRecyclerViewHeaderFooter header;
-    @Bind(R.id.footer)
+    @BindView(R.id.footer)
     CanRecyclerViewHeaderFooter footer;
 
 
-    @Bind(R.id.pb)
+    @BindView(R.id.pb)
     ProgressBar pb;
-    @Bind(R.id.tv_loadmore)
+    @BindView(R.id.tv_loadmore)
     TextView tvLoadmore;
 
     CanRVAdapter<String> adapter;
@@ -150,7 +150,7 @@ public class HeaderFooterActivity extends AppCompatActivity implements CanRecycl
 
                 footer.loadMoreComplete();
             }
-        }, 7000);
+        }, 2000);
 
 
     }

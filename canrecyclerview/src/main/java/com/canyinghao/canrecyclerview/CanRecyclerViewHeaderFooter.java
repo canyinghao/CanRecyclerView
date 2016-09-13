@@ -10,6 +10,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.nineoldandroids.view.ViewHelper;
+
 import java.util.Arrays;
 
 /**
@@ -31,10 +33,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     private boolean isAttached;
     //    是头部还是底部
     private boolean isHeader = true;
-    //  是否触摸中
-    private boolean isRecyclerTouch;
-    //   偏移的距离
-    private int downTranslation;
+
     //   RecyclerView是否颠倒
     private boolean isReversed;
     //    RecyclerView是否水平
@@ -282,11 +281,15 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
             int first = calculateTranslation();
             if (isVertical) {
 
-                setTranslationY(first);
+
+                ViewHelper.setTranslationY(this, first);
 
             } else {
-                setTranslationX(first);
+
+                ViewHelper.setTranslationX(this, first);
             }
+
+
         } else {
             isCanLoad = true;
         }

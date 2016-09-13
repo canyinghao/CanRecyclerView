@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'android-apt'
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "com.canyinghao.canrecyclerviewdemo"
-        minSdkVersion 11
-        targetSdkVersion 23
+        minSdkVersion 9
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
     }
@@ -21,12 +21,14 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.0'
 
-    compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:design:24.2.0'
 
-    compile 'com.android.support:recyclerview-v7:23.2.1'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.canyinghao:canadapter:1.0.5'
+    compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    compile 'com.canyinghao:canadapter:1.0.6'
     compile project(':canrecyclerview')
 }

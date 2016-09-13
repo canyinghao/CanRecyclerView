@@ -24,24 +24,23 @@ public class RecyclerViewEmpty extends RecyclerView {
             Adapter<?> adapter = getAdapter();
 
 
-            if (adapter != null && emptyView != null) {
+            if (adapter != null) {
                 if (adapter.getItemCount() == 0) {
                     if (emptyView != null) {
                         emptyView.setVisibility(View.VISIBLE);
-                        if (hideOrShowRV){
-                            RecyclerViewEmpty.this.setVisibility(View.GONE);
-                        }
-
                     }
 
+                    if (hideOrShowRV) {
+                        RecyclerViewEmpty.this.setVisibility(View.GONE);
+                    }
 
                 } else {
                     if (emptyView != null) {
                         emptyView.setVisibility(View.GONE);
-                        if (hideOrShowRV){
-                            RecyclerViewEmpty.this.setVisibility(View.VISIBLE);
-                        }
+                    }
 
+                    if (hideOrShowRV) {
+                        RecyclerViewEmpty.this.setVisibility(View.VISIBLE);
                     }
 
 

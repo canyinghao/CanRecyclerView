@@ -20,17 +20,17 @@ import com.canyinghao.canrecyclerview.RecyclerViewEmpty;
 import com.canyinghao.canrecyclerview.VerticalDividerItemDecoration;
 import com.canyinghao.canrecyclerviewdemo.model.MainBean;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
 public class ViewPagerActivity extends Activity {
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.tabLayout)
+    @BindView(R.id.tabLayout)
     TabLayout tabLayout;
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     CanRecyclerViewPager viewpager;
 
     Activity context;
@@ -122,7 +122,7 @@ public class ViewPagerActivity extends Activity {
                         rv_item2.setLayoutManager(layout);
                         rv_item2.addItemDecoration(new HorizontalDividerItemDecoration.Builder(context).colorResId(R.color.line).size(5).showLastDivider().build());
                         rv_item2.setEmptyView(helper.getView(R.id.empty));
-                        rv_item2.setAdapter(adapterItem);
+
 
                         adapterItem.clear();
                         adapterItem.addLastItem(new MainBean("点击删除"));
@@ -136,6 +136,9 @@ public class ViewPagerActivity extends Activity {
 
 
                         });
+
+                        rv_item2.setAdapter(adapterItem);
+
                         break;
                     case 2:
 
