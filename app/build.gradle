@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.canyinghao.canrecyclerviewdemo"
         minSdkVersion 9
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -29,6 +29,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
-    compile 'com.canyinghao:canadapter:1.0.6'
+    compile 'com.canyinghao:canadapter:1.0.8'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile project(':canrecyclerview')
 }

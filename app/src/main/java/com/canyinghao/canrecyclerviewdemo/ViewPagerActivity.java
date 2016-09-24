@@ -1,6 +1,7 @@
 package com.canyinghao.canrecyclerviewdemo;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,6 +47,7 @@ public class ViewPagerActivity extends Activity {
 
         initViewPager();
     }
+
 
     protected void initViewPager() {
 
@@ -178,7 +180,12 @@ public class ViewPagerActivity extends Activity {
         viewpager.setHasFixedSize(true);
         viewpager.setLongClickable(true);
         viewpager.setOnePage(true);
-        viewpager.addScaleListener(0.9f);
+
+
+        if(Build.VERSION.SDK_INT>=11){
+            viewpager.addScaleListener(0.9f);
+        }
+
 
         adapter.addLastItem(new MainBean("xxx"));
         adapter.addLastItem(new MainBean("xxx"));

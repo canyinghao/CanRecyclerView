@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.canyinghao.canrecyclerviewdemo" >
+    package="com.canyinghao.canrecyclerviewdemo">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".App"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
         <activity
             android:name=".MainActivity"
@@ -21,13 +27,12 @@
         </activity>
 
 
-        <activity
-            android:name=".ViewPagerActivity"  />
+        <activity android:name=".ViewPagerActivity" />
 
 
+        <activity android:name=".HeaderFooterActivity" />
 
-        <activity
-            android:name=".HeaderFooterActivity"  />
+        <activity android:name=".ScaleActivity" />
 
     </application>
 

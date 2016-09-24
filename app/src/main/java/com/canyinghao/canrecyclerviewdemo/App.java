@@ -4,7 +4,7 @@ import android.app.Application;
 import android.widget.Toast;
 
 
-public class App extends Application {
+public class App extends Application   {
     private static App sInstance;
 
 
@@ -13,6 +13,7 @@ public class App extends Application {
         super.onCreate();
 
         sInstance = this;
+
 
 
     }
@@ -31,5 +32,6 @@ public class App extends Application {
 
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
+
 
 }

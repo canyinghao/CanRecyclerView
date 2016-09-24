@@ -1,8 +1,11 @@
 package com.canyinghao.canrecyclerview;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -25,7 +28,7 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class CanRecyclerViewPager extends RecyclerView {
+public class CanRecyclerViewPager extends RecyclerViewEmpty {
 
 
     public static final String TAG = "CanRecyclerViewPager";
@@ -104,8 +107,10 @@ public class CanRecyclerViewPager extends RecyclerView {
                     } else {
                         rate = 1;
                     }
-                    v.setScaleY(1 - rate * (1.0f - scale));
-                    v.setScaleX(1 - rate * (1.0f - scale));
+
+
+                    ViewCompat.setScaleX(v,1 - rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v,1 - rate * (1.0f - scale));
 
                 } else {
                     //往右 从 padding 到 recyclerView.getWidth()-padding 的过程中，由大到小
@@ -113,8 +118,10 @@ public class CanRecyclerViewPager extends RecyclerView {
                         rate = (getWidth() - padding - v.getLeft()) * 1f / v.getWidth();
                     }
 
-                    v.setScaleY(scale + rate * (1.0f - scale));
-                    v.setScaleX(scale + rate * (1.0f - scale));
+
+
+                    ViewCompat.setScaleX(v,scale + rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v,scale + rate * (1.0f - scale));
 
                 }
             } else {
@@ -126,8 +133,11 @@ public class CanRecyclerViewPager extends RecyclerView {
                         rate = 1;
                     }
 
-                    v.setScaleY(1 - rate * (1.0f - scale));
-                    v.setScaleX(1 - rate * (1.0f - scale));
+
+
+
+                    ViewCompat.setScaleX(v,1 - rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v,1 - rate * (1.0f - scale));
 
                 } else {
                     //往右 从 padding 到 recyclerView.getWidth()-padding 的过程中，由大到小
@@ -135,8 +145,10 @@ public class CanRecyclerViewPager extends RecyclerView {
                         rate = (getHeight() - padding - v.getTop()) * 1f / v.getHeight();
                     }
 
-                    v.setScaleY(scale + rate * (1.0f - scale));
-                    v.setScaleX(scale + rate * (1.0f - scale));
+
+
+                    ViewCompat.setScaleX(v,scale + rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v,scale + rate * (1.0f - scale));
                 }
 
             }
@@ -145,6 +157,7 @@ public class CanRecyclerViewPager extends RecyclerView {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public void addScaleListener(final float scale) {
 
 
@@ -160,6 +173,8 @@ public class CanRecyclerViewPager extends RecyclerView {
                 setScale(scale);
             }
         });
+
+
 
         addOnLayoutChangeListener(new OnLayoutChangeListener() {
             @Override
@@ -179,8 +194,10 @@ public class CanRecyclerViewPager extends RecyclerView {
 
 
                         View view = getChildAt(i);
-                        view.setScaleY(scale);
-                        view.setScaleX(scale);
+
+
+                        ViewCompat.setScaleX(view,scale);
+                        ViewCompat.setScaleY(view,scale);
 
                     }
 
@@ -188,12 +205,14 @@ public class CanRecyclerViewPager extends RecyclerView {
                     if (getChildAt(1) != null) {
                         if (getCurrentPosition() == 0) {
                             View v1 = getChildAt(1);
-                            v1.setScaleY(scale);
-                            v1.setScaleX(scale);
+
+                            ViewCompat.setScaleX(v1,scale);
+                            ViewCompat.setScaleY(v1,scale);
                         } else {
                             View v1 = getChildAt(0);
-                            v1.setScaleY(scale);
-                            v1.setScaleX(scale);
+
+                            ViewCompat.setScaleX(v1,scale);
+                            ViewCompat.setScaleY(v1,scale);
                         }
                     }
 

@@ -29,7 +29,7 @@ public class CanItemDecoration extends RecyclerView.ItemDecoration {
     private boolean isVertical;
 
     private boolean isHeader = true;
-    RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.LayoutManager layoutManager;
 
     public CanItemDecoration(RecyclerView.LayoutManager manager) {
 
@@ -64,6 +64,8 @@ public class CanItemDecoration extends RecyclerView.ItemDecoration {
 
 
         boolean relatedPosition = false;
+
+        initLayoutManager();
 
         if (isHeader) {
 

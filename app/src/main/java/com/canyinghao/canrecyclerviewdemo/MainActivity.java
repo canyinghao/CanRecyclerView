@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    @OnClick({R.id.btn_header,R.id.btn_viewpager})
+    @OnClick({R.id.btn_header,R.id.btn_viewpager,R.id.btn_scale})
     public void click(View v){
 
         switch (v.getId()){
@@ -46,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_viewpager:
 
                 startActivity(new Intent(this,ViewPagerActivity.class));
+                break;
+
+            case R.id.btn_scale:
+
+                startActivity(new Intent(this,ScaleActivity.class));
                 break;
         }
 
