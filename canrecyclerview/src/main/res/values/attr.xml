@@ -6,6 +6,7 @@
         <attr name="minScaleFactor" format="float"/>
         <attr name="maxScaleFactor" format="float"/>
         <attr name="autoScaleTime"  format="integer"/>
+        <attr name="isTwoStage"  format="boolean"/>
     </declare-styleable>
 
 

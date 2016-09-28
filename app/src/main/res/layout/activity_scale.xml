@@ -8,7 +8,12 @@
     <com.canyinghao.canrecyclerview.CanScaleRecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:minScaleFactor="0.8"
+        app:maxScaleFactor="3"
+        app:autoScaleTime="10"
+        app:isTwoStage="false"
+        />
 
 
 </FrameLayout>

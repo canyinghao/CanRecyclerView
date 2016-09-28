@@ -28,6 +28,8 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     private static final int INVALID_POINTER_ID = -1;
 
+    private static final int FACTOR = 1;
+
 
     private int mMainPointerId = INVALID_POINTER_ID;
 
@@ -43,15 +45,17 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     private float centerX;
     private float centerY;
 
-    private float mMinScaleFactor = 1.0f;
-    private float mMidScaleFactor = 2.5f;
-    private float mMaxScaleFactor = 4f;
+    private float mMinScaleFactor = 0.8f;
+    private float mMidScaleFactor = 2f;
+    private float mMaxScaleFactor = 3f;
 
-    private int mAutoTime = 5;
-    private float mAutoBigger = 1.08f;
-    private float mAutoSmall = 0.92f;
+    private int mAutoTime = 10;
+    private float mAutoBigger = 1.04f;
+    private float mAutoSmall = 0.96f;
 
     private boolean isScale;
+
+    private boolean isTwoStage;
 
 
     private GestureDetector mGestureDetector;
@@ -74,7 +78,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
      */
     private class AutoScaleRunnable implements Runnable {
 
-        private float mTargetScaleFactor ;
+        private float mTargetScaleFactor;
 
         private float mGrad;
 
@@ -109,7 +113,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 mCurrentScaleFactor = mTargetScaleFactor;
             }
 
-            checkBorder();
+            checkOffsetBorder();
             invalidate();
         }
     }
@@ -123,11 +127,10 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         public int scrollVerticallyBy(int dy, Recycler recycler, State state) {
 
 
-            int result = super.scrollVerticallyBy((int) Math.ceil(dy / mCurrentScaleFactor), recycler, state);
-            if (result == Math.ceil(dy / mCurrentScaleFactor)) {
-                return dy;
-            }
-            return result;
+
+
+            return super.scrollVerticallyBy((int) Math.ceil(dy / mCurrentScaleFactor), recycler, state);
+
         }
     }
 
@@ -148,26 +151,23 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         for (int i = 0; i < ta.getIndexCount(); i++) {
             int attr = ta.getIndex(i);
             if (attr == R.styleable.CanScaleRecyclerView_minScaleFactor) {
-                mMinScaleFactor = ta.getFloat(attr, 1.0f);
+                mMinScaleFactor = ta.getFloat(attr, 0.8f);
             } else if (attr == R.styleable.CanScaleRecyclerView_maxScaleFactor) {
-                mMaxScaleFactor = ta.getFloat(attr, mMinScaleFactor * 4);
+                mMaxScaleFactor = ta.getFloat(attr, 3);
             } else if (attr == R.styleable.CanScaleRecyclerView_autoScaleTime) {
-                mAutoTime = ta.getInt(attr, 5);
+                mAutoTime = ta.getInt(attr, 10);
+            } else if (attr == R.styleable.CanScaleRecyclerView_isTwoStage) {
+                isTwoStage = ta.getBoolean(attr, false);
             }
         }
         ta.recycle();
 
-        mMidScaleFactor = (mMinScaleFactor + mMaxScaleFactor) / 2;
-        mCurrentScaleFactor = mMinScaleFactor;
-
+        mMidScaleFactor = (FACTOR + mMaxScaleFactor) / 2;
+        mCurrentScaleFactor = FACTOR;
 
 
         initDetector();
     }
-
-
-
-
 
 
     /**
@@ -176,15 +176,20 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     private void initDetector() {
         mScaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 
+
+            boolean fromBig = false;
+
+
             @Override
             public boolean onScaleBegin(ScaleGestureDetector detector) {
-
 
 
                 // 获取缩放的中心点
                 centerX = detector.getFocusX();
                 centerY = detector.getFocusY();
                 isScale = true;
+
+                fromBig = mCurrentScaleFactor > FACTOR;
 
                 return true;
             }
@@ -193,14 +198,31 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             public boolean onScale(ScaleGestureDetector detector) {
 
 
+                float tempFactor = mCurrentScaleFactor;
                 mCurrentScaleFactor *= detector.getScaleFactor();
                 mCurrentScaleFactor = Math.max(mMinScaleFactor, Math.min(mCurrentScaleFactor, mMaxScaleFactor));
 
-                CanScaleRecyclerView.this.invalidate();
+                if (fromBig) {
+                    if (tempFactor >= mCurrentScaleFactor) {
 
-                if (mOnGestureListener != null) {
+                        if (mCurrentScaleFactor <= FACTOR) {
+                            mCurrentScaleFactor = FACTOR;
+                        }
+                    }
+                }
+
+
+                CanScaleRecyclerView.this.
+
+                        invalidate();
+
+
+                if (mOnGestureListener != null)
+
+                {
                     mOnGestureListener.onScale(detector);
                 }
+
                 return true;
             }
 
@@ -209,11 +231,31 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             public void onScaleEnd(ScaleGestureDetector detector) {
 
                 isScale = false;
+
+                if (mCurrentScaleFactor < FACTOR) {
+
+                    postDelayed(new AutoScaleRunnable(FACTOR, mAutoBigger), mAutoTime);
+
+                } else {
+
+                    if (!isTwoStage && mCurrentScaleFactor > mMidScaleFactor) {
+
+                        postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoSmall), mAutoTime);
+                    }
+
+
+                }
+                checkOffsetBorder();
+
                 super.onScaleEnd(detector);
             }
-        });
+        }
 
-        mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+        );
+
+        mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener()
+
+        {
 
 
             @Override
@@ -230,29 +272,48 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 centerX = e.getRawX();
                 centerY = e.getRawY();
 
-                if (mCurrentScaleFactor < mMidScaleFactor) {
-                    postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
-                } else if (mCurrentScaleFactor < mMaxScaleFactor) {
-                    postDelayed(new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger), mAutoTime);
+                if (isTwoStage) {
+
+                    if (mCurrentScaleFactor < mMidScaleFactor) {
+                        postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
+                    } else if (mCurrentScaleFactor < mMaxScaleFactor) {
+                        postDelayed(new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger), mAutoTime);
+                    } else {
+                        postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+                    }
+
                 } else {
-                    postDelayed(new AutoScaleRunnable(mMinScaleFactor, mAutoSmall), mAutoTime);
+
+
+                    if (mCurrentScaleFactor < mMidScaleFactor) {
+                        postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
+                    } else {
+                        postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+                    }
+
+
                 }
+
 
                 if (mOnGestureListener != null) {
                     mOnGestureListener.onDoubleTap(e);
                 }
                 return true;
             }
-        });
+        }
+
+        );
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
-        if (mCurrentScaleFactor == 1.0f) {
+        if (mCurrentScaleFactor <= 1.0f) {
             mOffsetX = 0.0f;
             mOffsetY = 0.0f;
         }
+
+
 
         canvas.translate(mOffsetX, mOffsetY);//偏移
 
@@ -293,6 +354,9 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
                 //滑动时偏移
                 mOffsetX += (mainPointX - mLastTouchX);
+
+
+
                 mOffsetY += (mainPointY - mLastTouchY);
 
 
@@ -300,7 +364,8 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 mLastTouchY = mainPointY;
 
 
-                checkBorder();
+
+                checkOffsetBorder();
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
@@ -328,13 +393,16 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
 
     /**
-     * 保证在边界内,通过缩放中心距左右、上下边界的比例确定
+     * 检测偏移边界,通过缩放中心距左右、上下边界的比例确定
      */
-    private void checkBorder() {
+    private void checkOffsetBorder() {
 
+        if (mCurrentScaleFactor < FACTOR) {
+            return;
+        }
 
-        float sumOffsetX = getWidth() * (mCurrentScaleFactor - 1.0f);
-        float sumOffsetY = getHeight() * (mCurrentScaleFactor - 1.0f);
+        float sumOffsetX = getWidth() * (mCurrentScaleFactor - FACTOR);
+        float sumOffsetY = getHeight() * (mCurrentScaleFactor - FACTOR);
 
 
         float numX = (getWidth() - centerX) / centerX + 1;
@@ -392,8 +460,8 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         return mMinScaleFactor;
     }
 
-    public void setMinScaleFactor(float initScaleFactor) {
-        this.mMinScaleFactor = initScaleFactor;
+    public void setMinScaleFactor(float minScaleFactor) {
+        this.mMinScaleFactor = minScaleFactor;
     }
 
     public float getMaxScaleFactor() {
@@ -404,6 +472,13 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         this.mMaxScaleFactor = maxScaleFactor;
     }
 
+    public boolean isTwoStage() {
+        return isTwoStage;
+    }
+
+    public void setTwoStage(boolean twoStage) {
+        isTwoStage = twoStage;
+    }
 
     public OnGestureListener getOnGestureListener() {
         return mOnGestureListener;
