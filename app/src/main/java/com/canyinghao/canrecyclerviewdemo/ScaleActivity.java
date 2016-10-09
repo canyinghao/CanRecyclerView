@@ -57,6 +57,7 @@ public class ScaleActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
 
 
+
     }
 
 

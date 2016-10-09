@@ -57,6 +57,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     private boolean isTwoStage;
 
+    private boolean isDoubleScale = true;
 
     private GestureDetector mGestureDetector;
 
@@ -127,8 +128,6 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         public int scrollVerticallyBy(int dy, Recycler recycler, State state) {
 
 
-
-
             return super.scrollVerticallyBy((int) Math.ceil(dy / mCurrentScaleFactor), recycler, state);
 
         }
@@ -158,6 +157,8 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 mAutoTime = ta.getInt(attr, 10);
             } else if (attr == R.styleable.CanScaleRecyclerView_isTwoStage) {
                 isTwoStage = ta.getBoolean(attr, false);
+            } else if (attr == R.styleable.CanScaleRecyclerView_isDoubleScale) {
+                isDoubleScale = ta.getBoolean(attr, true);
             }
         }
         ta.recycle();
@@ -272,26 +273,29 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 centerX = e.getRawX();
                 centerY = e.getRawY();
 
-                if (isTwoStage) {
+                if (isDoubleScale) {
 
-                    if (mCurrentScaleFactor < mMidScaleFactor) {
-                        postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
-                    } else if (mCurrentScaleFactor < mMaxScaleFactor) {
-                        postDelayed(new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger), mAutoTime);
+                    if (isTwoStage) {
+
+                        if (mCurrentScaleFactor < mMidScaleFactor) {
+                            postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
+                        } else if (mCurrentScaleFactor < mMaxScaleFactor) {
+                            postDelayed(new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger), mAutoTime);
+                        } else {
+                            postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+                        }
+
                     } else {
-                        postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+
+
+                        if (mCurrentScaleFactor < mMidScaleFactor) {
+                            postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
+                        } else {
+                            postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+                        }
+
+
                     }
-
-                } else {
-
-
-                    if (mCurrentScaleFactor < mMidScaleFactor) {
-                        postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
-                    } else {
-                        postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
-                    }
-
-
                 }
 
 
@@ -312,7 +316,6 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             mOffsetX = 0.0f;
             mOffsetY = 0.0f;
         }
-
 
 
         canvas.translate(mOffsetX, mOffsetY);//偏移
@@ -356,13 +359,11 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 mOffsetX += (mainPointX - mLastTouchX);
 
 
-
                 mOffsetY += (mainPointY - mLastTouchY);
 
 
                 mLastTouchX = mainPointX;
                 mLastTouchY = mainPointY;
-
 
 
                 checkOffsetBorder();
@@ -478,6 +479,14 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     public void setTwoStage(boolean twoStage) {
         isTwoStage = twoStage;
+    }
+
+    public boolean isDoubleScale() {
+        return isDoubleScale;
+    }
+
+    public void setDoubleScale(boolean doubleScale) {
+        isDoubleScale = doubleScale;
     }
 
     public OnGestureListener getOnGestureListener() {

@@ -13,6 +13,7 @@
         app:maxScaleFactor="3"
         app:autoScaleTime="10"
         app:isTwoStage="false"
+        app:isDoubleScale="true"
         />
 
 
