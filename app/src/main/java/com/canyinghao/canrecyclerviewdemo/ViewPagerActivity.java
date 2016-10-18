@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.canyinghao.canadapter.CanHolderHelper;
 import com.canyinghao.canadapter.CanOnItemListener;
@@ -56,7 +55,7 @@ public class ViewPagerActivity extends Activity {
         LinearLayoutManager layout = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,
                 false);
         viewpager.setLayoutManager(layout);
-        CanRVAdapter adapter = new CanRVAdapter<MainBean>(viewpager, R.layout.item_main) {
+        CanRVAdapter<MainBean> adapter = new CanRVAdapter<MainBean>(viewpager, R.layout.item_main) {
 
             @Override
             protected void setView(CanHolderHelper helper, int i, MainBean bean) {
@@ -71,7 +70,7 @@ public class ViewPagerActivity extends Activity {
                 }
 
 
-                final CanRVAdapter adapterItem = new CanRVAdapter<MainBean>(viewpager, R.layout.item_3) {
+                final CanRVAdapter<MainBean> adapterItem = new CanRVAdapter<MainBean>(viewpager, R.layout.item_3) {
 
                     @Override
                     protected void setView(CanHolderHelper helper, int i, MainBean bean) {
@@ -94,7 +93,7 @@ public class ViewPagerActivity extends Activity {
                 RecyclerViewEmpty rv_item1 = helper.getView(R.id.rv_item1);
                 RecyclerViewEmpty rv_item2 = helper.getView(R.id.rv_item2);
 
-                LinearLayoutManager layout = null;
+                LinearLayoutManager layout ;
 
                 switch (i) {
 
@@ -107,11 +106,12 @@ public class ViewPagerActivity extends Activity {
                         rv_item2.setEmptyView(helper.getView(R.id.empty));
                         rv_item2.setAdapter(adapterItem);
                         adapterItem.setOnItemListener(new CanOnItemListener() {
-                            public void onRVItemClick(ViewGroup parent, View itemView, int position) {
+
+
+                            public void onItemChildClick(View view, int position) {
 
                                 adapterItem.removeItem(position);
                                 App.getInstance().show("deleteItem:" + position);
-
                             }
 
 
@@ -129,12 +129,14 @@ public class ViewPagerActivity extends Activity {
                         adapterItem.clear();
                         adapterItem.addLastItem(new MainBean("点击删除"));
                         adapterItem.setOnItemListener(new CanOnItemListener() {
-                            public void onRVItemClick(ViewGroup parent, View itemView, int position) {
+
+
+                            public void onItemChildClick(View view, int position) {
 
                                 adapterItem.clear();
-
-
                             }
+
+
 
 
                         });

@@ -26,12 +26,9 @@ import android.view.ScaleGestureDetector;
 public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
 
-    private static final int INVALID_POINTER_ID = -1;
 
     private static final int FACTOR = 1;
 
-
-    private int mMainPointerId = INVALID_POINTER_ID;
 
 
     private float mCurrentScaleFactor;
@@ -330,15 +327,23 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         super.onTouchEvent(event);
 
         if (mGestureDetector.onTouchEvent(event)) {
-            mMainPointerId = event.getPointerId(0);
+
             return true;
+
         }
+
 
         mScaleGestureDetector.onTouchEvent(event);
 
 
-        //缩放时不偏移
         if (isScale) {
+
+            return true;
+        }
+
+
+        if(mCurrentScaleFactor==1){
+
             return true;
         }
 
@@ -347,12 +352,12 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             case MotionEvent.ACTION_DOWN:
                 mLastTouchX = event.getX();
                 mLastTouchY = event.getY();
-                mMainPointerId = event.getPointerId(0);
+
                 break;
             case MotionEvent.ACTION_MOVE:
-                int mainPointIndex = event.findPointerIndex(mMainPointerId);
-                float mainPointX = event.getX(mainPointIndex);
-                float mainPointY = event.getY(mainPointIndex);
+
+                float mainPointX = event.getX();
+                float mainPointY = event.getY();
 
 
                 //滑动时偏移
@@ -370,25 +375,12 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                mMainPointerId = INVALID_POINTER_ID;
-                break;
             case MotionEvent.ACTION_CANCEL:
-                mMainPointerId = INVALID_POINTER_ID;
+                mLastTouchX = event.getX();
+                mLastTouchY = event.getY();
                 break;
-            case MotionEvent.ACTION_POINTER_UP: {
-
-                int pointerIndex = event.getActionIndex();
-                int pointerId = event.getPointerId(pointerIndex);
-                if (pointerId == mMainPointerId) {
-
-                    int newPointerIndex = (pointerIndex == 0 ? 1 : 0);
-                    mLastTouchX = event.getX(newPointerIndex);
-                    mLastTouchY = event.getY(newPointerIndex);
-                    mMainPointerId = event.getPointerId(newPointerIndex);
-                }
-                break;
-            }
         }
+
         return true;
     }
 
