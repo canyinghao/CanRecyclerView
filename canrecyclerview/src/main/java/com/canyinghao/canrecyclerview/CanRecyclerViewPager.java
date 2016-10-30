@@ -6,8 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -28,19 +30,25 @@ import java.util.List;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class CanRecyclerViewPager extends RecyclerViewEmpty {
+public class CanRecyclerViewPager extends RecyclerView {
 
 
     public static final String TAG = "CanRecyclerViewPager";
 
     protected Adapter mAdapter;
-    protected float mFriction = 0.1f;
+    protected float mFriction = 0.08f;
 
     protected boolean mOnePage;
     protected List<OnPageChangedListener> mOnPageChangedListeners;
 
     protected View mCurrentView;
-    protected boolean isSmooth;
+    protected boolean isDragging;
+
+    protected int newPosition;
+
+
+    protected int mCurrentPosition;
+    protected int mLocation;
 
 
     public CanRecyclerViewPager(Context context) {
@@ -109,8 +117,8 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                     }
 
 
-                    ViewCompat.setScaleX(v,1 - rate * (1.0f - scale));
-                    ViewCompat.setScaleY(v,1 - rate * (1.0f - scale));
+                    ViewCompat.setScaleX(v, 1 - rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v, 1 - rate * (1.0f - scale));
 
                 } else {
                     //往右 从 padding 到 recyclerView.getWidth()-padding 的过程中，由大到小
@@ -119,9 +127,8 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                     }
 
 
-
-                    ViewCompat.setScaleX(v,scale + rate * (1.0f - scale));
-                    ViewCompat.setScaleY(v,scale + rate * (1.0f - scale));
+                    ViewCompat.setScaleX(v, scale + rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v, scale + rate * (1.0f - scale));
 
                 }
             } else {
@@ -134,10 +141,8 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                     }
 
 
-
-
-                    ViewCompat.setScaleX(v,1 - rate * (1.0f - scale));
-                    ViewCompat.setScaleY(v,1 - rate * (1.0f - scale));
+                    ViewCompat.setScaleX(v, 1 - rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v, 1 - rate * (1.0f - scale));
 
                 } else {
                     //往右 从 padding 到 recyclerView.getWidth()-padding 的过程中，由大到小
@@ -146,9 +151,8 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                     }
 
 
-
-                    ViewCompat.setScaleX(v,scale + rate * (1.0f - scale));
-                    ViewCompat.setScaleY(v,scale + rate * (1.0f - scale));
+                    ViewCompat.setScaleX(v, scale + rate * (1.0f - scale));
+                    ViewCompat.setScaleY(v, scale + rate * (1.0f - scale));
                 }
 
             }
@@ -160,8 +164,11 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public void addScaleListener(final float scale) {
 
+        if(scale>=1){
+            return;
+        }
 
-        addOnScrollListener(new RecyclerView.OnScrollListener() {
+        addOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int scrollState) {
 
@@ -173,7 +180,6 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                 setScale(scale);
             }
         });
-
 
 
         addOnLayoutChangeListener(new OnLayoutChangeListener() {
@@ -196,8 +202,8 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                         View view = getChildAt(i);
 
 
-                        ViewCompat.setScaleX(view,scale);
-                        ViewCompat.setScaleY(view,scale);
+                        ViewCompat.setScaleX(view, scale);
+                        ViewCompat.setScaleY(view, scale);
 
                     }
 
@@ -206,13 +212,13 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                         if (getCurrentPosition() == 0) {
                             View v1 = getChildAt(1);
 
-                            ViewCompat.setScaleX(v1,scale);
-                            ViewCompat.setScaleY(v1,scale);
+                            ViewCompat.setScaleX(v1, scale);
+                            ViewCompat.setScaleY(v1, scale);
                         } else {
                             View v1 = getChildAt(0);
 
-                            ViewCompat.setScaleX(v1,scale);
-                            ViewCompat.setScaleY(v1,scale);
+                            ViewCompat.setScaleX(v1, scale);
+                            ViewCompat.setScaleY(v1, scale);
                         }
                     }
 
@@ -228,21 +234,39 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
     public void setAdapter(Adapter adapter) {
 
         this.mAdapter = adapter;
+
+        Adapter oldAdapter = getAdapter();
+        if (oldAdapter != null && insertedObserver != null) {
+            oldAdapter.unregisterAdapterDataObserver(insertedObserver);
+        }
+        if (adapter != null && insertedObserver != null) {
+            adapter.registerAdapterDataObserver(insertedObserver);
+        }
         super.setAdapter(adapter);
+
+
     }
 
 
-    int mCurrentPosition;
-    int mLoction;
-
     @Override
-    public void smoothScrollToPosition(int position) {
+    public void scrollToPosition(int position) {
+        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
+            super.scrollToPosition(position);
+            return;
+        }
 
+        scroll(position, false);
+    }
 
+    private void scroll(int position, boolean isSmooth) {
         final int mPositionBeforeScroll = mCurrentPosition;
         mCurrentPosition = position;
-        isSmooth = true;
-        super.smoothScrollToPosition(position);
+
+        if (isSmooth) {
+            super.smoothScrollToPosition(position);
+        } else {
+            super.scrollToPosition(position);
+        }
 
         if (mOnPageChangedListeners != null) {
             for (OnPageChangedListener onPageChangedListener : mOnPageChangedListeners) {
@@ -251,6 +275,18 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
                 }
             }
         }
+
+
+    }
+
+    @Override
+    public void smoothScrollToPosition(int position) {
+        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
+            super.smoothScrollToPosition(position);
+            return;
+        }
+
+        scroll(position, true);
     }
 
 
@@ -260,8 +296,14 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
 
     }
 
+
     @Override
     public boolean fling(int velocityX, int velocityY) {
+
+        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
+            return fling(velocityX, velocityY);
+        }
+
         boolean flinging = super.fling((int) (velocityX * mFriction), (int) (velocityY * mFriction));
         if (flinging) {
 
@@ -270,14 +312,18 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
 
             flingCount = getFlingCountXY(velocityX, velocityY);
 
-
             if (mOnePage) {
 
                 flingCount = Math.max(-1, Math.min(1, flingCount));
 
-
             }
-            int targetPosition = mCurrentPosition + flingCount;
+
+            int targetPosition;
+            if (isReverseLayout()) {
+                targetPosition = mCurrentPosition - flingCount;
+            } else {
+                targetPosition = mCurrentPosition + flingCount;
+            }
 
 
             smoothScrollToPosition(safePosition(targetPosition, mAdapter.getItemCount()));
@@ -291,22 +337,28 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
+        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
+            return dispatchTouchEvent(ev);
+        }
+
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
 
 
             int count = getChildCount();
 
-            if (count >= 3) {
-                int midNum = getMidNum(count);
+            if (count > 0) {
+                if (count >= 3) {
+                    int midNum = getMidNum(count);
 
 
-                mCurrentView = getChildAt(midNum);
-            } else {
-                mCurrentView = getChildAt(0);
+                    mCurrentView = getChildAt(midNum);
+                } else {
+                    mCurrentView = getChildAt(0);
+                }
             }
 
 
-            mLoction = getLoaction();
+            mLocation = getLoaction();
 
 
         } else if (ev.getAction() == MotionEvent.ACTION_UP) {
@@ -314,16 +366,20 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
             int count = getChildCount();
 
             View midView = null;
-            if (count >= 3) {
-                int midNum = getMidNum(count);
+            if (count > 0) {
+                if (count >= 3) {
+                    int midNum = getMidNum(count);
 
 
-                midView = getChildAt(midNum);
-            } else {
-                midView = getChildAt(0);
+                    midView = getChildAt(midNum);
+                } else {
+                    midView = getChildAt(0);
+                }
             }
 
-            newPostion = getChildAdapterPosition(midView);
+            if (midView != null) {
+                newPosition = getChildAdapterPosition(midView);
+            }
 
 
         }
@@ -331,75 +387,78 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
     }
 
 
-    int newPostion;
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-
-        return super.onTouchEvent(e);
-    }
-
-
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
+        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
+            return;
+        }
         switch (state) {
             case SCROLL_STATE_IDLE:
 
-
-                if (!isSmooth) {
-
+                if (isDragging) {
 
                     int location = getLoaction();
-
 
                     int targetPosition = mCurrentPosition;
 
 
-                    int minPostion = 0;
+                    int minPosition = 0;
                     if (isHorizontally()) {
 
 
-                        if (mCurrentView.getWidth() < getWidth() / 4) {
+                        if (mCurrentView.getWidth() < getWidth() / 2) {
 
-                            minPostion = 0;
+                            minPosition = 0;
                         } else {
-                            minPostion = mCurrentView.getWidth() / 4;
+                            minPosition = mCurrentView.getWidth() / 2;
                         }
 
-
                     } else {
-                        if (mCurrentView.getHeight() < getHeight() / 4) {
+                        if (mCurrentView.getHeight() < getHeight() / 2) {
 
-                            minPostion = 0;
+                            minPosition = 0;
                         } else {
-                            minPostion = mCurrentView.getHeight() / 4;
+                            minPosition = mCurrentView.getHeight() / 2;
                         }
 
 
                     }
 
-                    if (newPostion - targetPosition > 1) {
 
-                        targetPosition = newPostion;
+                    if (newPosition - targetPosition >= 1) {
+
+                        targetPosition = newPosition;
+
                     } else {
-                        if (mLoction - location > minPostion) {
 
-                            targetPosition++;
+                        if (mLocation<getWidth()) {
+
+                            if (mLocation - location >= minPosition) {
+
+                                if (isReverseLayout()) {
+                                    targetPosition--;
 
 
-                        } else if (location - mLoction > minPostion) {
+                                } else {
+                                    targetPosition++;
+                                }
 
 
-                            targetPosition--;
+                            } else if (location - mLocation >= minPosition) {
+
+                                if (isReverseLayout()) {
+                                    targetPosition++;
+                                } else {
+                                    targetPosition--;
+                                }
+
+                            }
                         }
-                    }
 
+                    }
 
                     smoothScrollToPosition(safePosition(targetPosition, mAdapter.getItemCount()));
-                } else {
-                    isSmooth = false;
-
                 }
 
 
@@ -407,11 +466,14 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
 
             case SCROLL_STATE_DRAGGING:
 
+                isDragging = true;
 
                 break;
 
             case SCROLL_STATE_SETTLING:
 
+
+                isDragging = false;
 
                 break;
 
@@ -463,6 +525,9 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
 
     private int getLoaction() {
 
+        if (mCurrentView == null) {
+            return 0;
+        }
 
         int[] vLocationOnScreen = new int[2];
         mCurrentView.getLocationOnScreen(vLocationOnScreen);
@@ -492,6 +557,19 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
         return midNum;
     }
 
+    private boolean isReverseLayout() {
+
+
+        if (getLayoutManager() instanceof LinearLayoutManager) {
+
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) getLayoutManager();
+            return linearLayoutManager.getReverseLayout();
+
+        }
+
+        return false;
+    }
+
     public void addOnPageChangedListener(OnPageChangedListener listener) {
         if (mOnPageChangedListeners == null) {
             mOnPageChangedListeners = new ArrayList<>();
@@ -516,7 +594,7 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
     }
 
 
-    public  void setTabLayoutSupport(@NonNull final TabLayout tabLayout, @NonNull ViewPagerTabLayoutAdapter viewPagerTabLayoutAdapter) {
+    public void setTabLayoutSupport(@NonNull final TabLayout tabLayout, @NonNull ViewPagerTabLayoutAdapter viewPagerTabLayoutAdapter) {
         tabLayout.removeAllTabs();
 
         int count = viewPagerTabLayoutAdapter.getItemCount();
@@ -529,13 +607,14 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
             @Override
             public void OnPageChanged(int oldPosition, int newPosition) {
 
-                if (tabLayout != null && tabLayout.getTabAt(newPosition) != null) {
-                    tabLayout.getTabAt(newPosition).select();
+                TabLayout.Tab tab = tabLayout.getTabAt(newPosition);
+                if (tab != null) {
+                    tab.select();
                 }
             }
         });
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 smoothScrollToPosition(tab.getPosition());
@@ -558,4 +637,21 @@ public class CanRecyclerViewPager extends RecyclerViewEmpty {
 
         int getItemCount();
     }
+
+
+    protected AdapterDataObserver insertedObserver = new AdapterDataObserver() {
+
+
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+
+            Log.e("onItemRangeInserted","xxxx");
+            if (positionStart == 0) {
+                scrollToPosition(itemCount);
+            }
+
+
+        }
+
+    };
+
 }

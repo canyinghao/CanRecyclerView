@@ -26,9 +26,7 @@ import android.view.ScaleGestureDetector;
 public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
 
-
     private static final int FACTOR = 1;
-
 
 
     private float mCurrentScaleFactor;
@@ -61,6 +59,9 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     private ScaleGestureDetector mScaleGestureDetector;
 
     private OnGestureListener mOnGestureListener;
+
+
+    private Runnable mAutoScaleRunnable;
 
     public interface OnGestureListener {
         boolean onScale(ScaleGestureDetector detector);
@@ -270,29 +271,45 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 centerX = e.getRawX();
                 centerY = e.getRawY();
 
+                if (mAutoScaleRunnable != null) {
+                    removeCallbacks(mAutoScaleRunnable);
+                }
+
                 if (isDoubleScale) {
 
                     if (isTwoStage) {
 
                         if (mCurrentScaleFactor < mMidScaleFactor) {
-                            postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
+
+
+                            mAutoScaleRunnable = new AutoScaleRunnable(mMidScaleFactor, mAutoBigger);
                         } else if (mCurrentScaleFactor < mMaxScaleFactor) {
-                            postDelayed(new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger), mAutoTime);
+
+
+                            mAutoScaleRunnable = new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger);
                         } else {
-                            postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+
+
+                            mAutoScaleRunnable = new AutoScaleRunnable(FACTOR, mAutoSmall);
                         }
 
                     } else {
 
 
                         if (mCurrentScaleFactor < mMidScaleFactor) {
-                            postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoBigger), mAutoTime);
+
+
+                            mAutoScaleRunnable = new AutoScaleRunnable(mMidScaleFactor, mAutoBigger);
                         } else {
-                            postDelayed(new AutoScaleRunnable(FACTOR, mAutoSmall), mAutoTime);
+
+
+                            mAutoScaleRunnable = new AutoScaleRunnable(FACTOR, mAutoSmall);
                         }
 
 
                     }
+
+                    postDelayed(mAutoScaleRunnable, mAutoTime);
                 }
 
 
@@ -342,7 +359,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         }
 
 
-        if(mCurrentScaleFactor==1){
+        if (mCurrentScaleFactor == 1) {
 
             return true;
         }

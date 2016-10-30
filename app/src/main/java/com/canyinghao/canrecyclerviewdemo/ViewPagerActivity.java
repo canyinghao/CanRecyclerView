@@ -20,6 +20,9 @@ import com.canyinghao.canrecyclerview.RecyclerViewEmpty;
 import com.canyinghao.canrecyclerview.VerticalDividerItemDecoration;
 import com.canyinghao.canrecyclerviewdemo.model.MainBean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -177,6 +180,10 @@ public class ViewPagerActivity extends Activity {
         };
         adapter.setRatio(1);
 
+        if(Build.VERSION.SDK_INT>=11){
+            viewpager.addScaleListener(0.9f);
+        }
+
         viewpager.setAdapter(adapter);
 
         viewpager.setHasFixedSize(true);
@@ -184,15 +191,10 @@ public class ViewPagerActivity extends Activity {
         viewpager.setOnePage(true);
 
 
-        if(Build.VERSION.SDK_INT>=11){
-            viewpager.addScaleListener(0.9f);
-        }
 
 
-        adapter.addLastItem(new MainBean("xxx"));
-        adapter.addLastItem(new MainBean("xxx"));
-        adapter.addLastItem(new MainBean("xxx"));
-        adapter.addLastItem(new MainBean("xxx"));
+
+
 
 
         viewpager.addOnPageChangedListener(new CanRecyclerViewPager.OnPageChangedListener() {
@@ -217,6 +219,15 @@ public class ViewPagerActivity extends Activity {
                 return array_list.length;
             }
         });
+
+
+        List<MainBean> list = new ArrayList<>();
+        list.add(new MainBean("xxx"));
+        list.add(new MainBean("xxx"));
+        list.add(new MainBean("xxx"));
+        list.add(new MainBean("xxx"));
+        adapter.setList(list);
+
 
     }
 }
