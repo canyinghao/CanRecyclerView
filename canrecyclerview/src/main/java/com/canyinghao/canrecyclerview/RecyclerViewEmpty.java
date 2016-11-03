@@ -25,7 +25,7 @@ public class RecyclerViewEmpty extends RecyclerView {
 
 
             if (adapter != null) {
-                if (adapter.getItemCount() == 0) {
+                if (adapter.getItemCount() <= 0) {
                     if (emptyView != null) {
                         emptyView.setVisibility(View.VISIBLE);
                     }
@@ -91,5 +91,11 @@ public class RecyclerViewEmpty extends RecyclerView {
 
     public boolean isHideOrShowRV() {
         return hideOrShowRV;
+    }
+
+    public void onChanged(){
+        if(emptyObserver!=null){
+            emptyObserver.onChanged();
+        }
     }
 }
