@@ -105,6 +105,33 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
         isLoadEnable = loadEnable;
     }
 
+
+    /**
+     * 获取 decoration
+     * @return CanItemDecoration
+     */
+    public CanItemDecoration getDecoration() {
+        return decoration;
+    }
+
+
+    /**
+     * 从recyclerView移出
+     */
+    public void remove(){
+        isAttached = false;
+
+        if(recyclerView!=null){
+            recyclerView.removeOnScrollListener(onScrollListener);
+            recyclerView.removeOnChildAttachStateChangeListener(onAttachListener);
+            if (decoration != null) {
+                recyclerView.removeItemDecoration(decoration);
+            }
+        }
+
+
+
+    }
     /**
      * 设置加载监听事件
      *
