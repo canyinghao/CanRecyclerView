@@ -9,7 +9,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -338,7 +337,7 @@ public class CanRecyclerViewPager extends RecyclerView {
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
         if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
-            return dispatchTouchEvent(ev);
+            return super.dispatchTouchEvent(ev);
         }
 
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -644,7 +643,7 @@ public class CanRecyclerViewPager extends RecyclerView {
 
         public void onItemRangeInserted(int positionStart, int itemCount) {
 
-            Log.e("onItemRangeInserted","xxxx");
+
             if (positionStart == 0) {
                 scrollToPosition(itemCount);
             }

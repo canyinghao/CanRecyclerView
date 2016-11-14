@@ -9,7 +9,7 @@
 
 ##添加依赖
 ```JAVA
-compile 'com.canyinghao:canrecyclerview:1.1.1'
+compile 'com.canyinghao:canrecyclerview:1.1.2'
 ```
 
 
