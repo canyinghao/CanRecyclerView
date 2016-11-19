@@ -300,7 +300,7 @@ public class CanRecyclerViewPager extends RecyclerView {
     public boolean fling(int velocityX, int velocityY) {
 
         if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
-            return fling(velocityX, velocityY);
+            return super.fling(velocityX, velocityY);
         }
 
         boolean flinging = super.fling((int) (velocityX * mFriction), (int) (velocityY * mFriction));
