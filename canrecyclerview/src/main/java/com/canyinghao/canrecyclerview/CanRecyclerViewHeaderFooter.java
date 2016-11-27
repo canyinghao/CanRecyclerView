@@ -38,8 +38,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     private boolean isReversed;
     //    RecyclerView是否水平
     private boolean isVertical;
-    //  用以缓存是否调用加载
-    private boolean isCanLoad;
+
     //  设置是否可加载
     private boolean isLoadEnable = true;
 
@@ -99,7 +98,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 是否可以加载，没有更多时可以调用
      *
-     * @param loadEnable
+     * @param loadEnable boolean
      */
     public void setLoadEnable(boolean loadEnable) {
         isLoadEnable = loadEnable;
@@ -108,6 +107,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
 
     /**
      * 获取 decoration
+     *
      * @return CanItemDecoration
      */
     public CanItemDecoration getDecoration() {
@@ -118,10 +118,10 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 从recyclerView移出
      */
-    public void remove(){
+    public void remove() {
         isAttached = false;
 
-        if(recyclerView!=null){
+        if (recyclerView != null) {
             recyclerView.removeOnScrollListener(onScrollListener);
             recyclerView.removeOnChildAttachStateChangeListener(onAttachListener);
             if (decoration != null) {
@@ -130,12 +130,12 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
         }
 
 
-
     }
+
     /**
      * 设置加载监听事件
      *
-     * @param loadMoreListener
+     * @param loadMoreListener OnLoadMoreListener
      */
     public void setLoadMoreListener(OnLoadMoreListener loadMoreListener) {
         this.loadMoreListener = loadMoreListener;
@@ -154,8 +154,8 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 依附的方法
      *
-     * @param recycler
-     * @param isHeader
+     * @param recycler RecyclerView
+     * @param isHeader boolean
      */
     public void attachTo(@NonNull final RecyclerView recycler, boolean isHeader) {
         if (recycler.getLayoutManager() == null) {
@@ -228,11 +228,11 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 重写该方法，更新头部底部宽高
      *
-     * @param changed
-     * @param l
-     * @param t
-     * @param r
-     * @param b
+     * @param changed boolean
+     * @param l       int
+     * @param t       int
+     * @param r       int
+     * @param b       int
      */
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -266,19 +266,19 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 滚动时移动头部底部
      */
-    private void onScrollChanged() {
+    public void onScrollChanged() {
 
         if (isHeader) {
-            boolean isFirst = hasItems() && isFirstRowVisible();
+            boolean isVisibility = hasItems() && isFirstRowVisible();
 
-            translationXY(isFirst);
+            translationXY(isVisibility);
 
 
         } else {
 
-            boolean isLast = hasItems() && isLastRowVisible();
+            boolean isVisibility = hasItems() && isLastRowVisible();
 
-            translationXY(isLast);
+            translationXY(isVisibility);
 
 
         }
@@ -289,18 +289,17 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 移动的方法
      *
-     * @param isFirst
+     * @param isVisibility boolean
      */
-    private void translationXY(boolean isFirst) {
-        setVisibility(isFirst ? VISIBLE : INVISIBLE);
+    private void translationXY(boolean isVisibility) {
+        setVisibility(isVisibility ? VISIBLE : INVISIBLE);
 
-        if (isFirst) {
+        if (isVisibility) {
 
-            if (isLoadEnable && isLoadComplete && isCanLoad && loadMoreListener != null) {
+            if (isLoadEnable && isLoadComplete && loadMoreListener != null) {
 
                 loadMoreListener.onLoadMore();
 
-                isCanLoad = false;
                 isLoadComplete = false;
             }
 
@@ -317,15 +316,13 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
             }
 
 
-        } else {
-            isCanLoad = true;
         }
     }
 
     /**
      * 判断头部底部进行计算距离
      *
-     * @return
+     * @return int
      */
     private int calculateTranslation() {
 
@@ -348,8 +345,8 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 计算距离的方法
      *
-     * @param isTop
-     * @return
+     * @param isTop boolean
+     * @return int
      */
     private int calculateTranslationXY(boolean isTop) {
         if (!isTop) {
@@ -391,7 +388,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 第一项是否显示
      *
-     * @return
+     * @return boolean
      */
     private boolean isFirstRowVisible() {
         if (layoutManager instanceof GridLayoutManager) {
@@ -426,7 +423,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
     /**
      * 最后一项是否显示
      *
-     * @return
+     * @return boolean
      */
     private boolean isLastRowVisible() {
         if (layoutManager instanceof GridLayoutManager) {
