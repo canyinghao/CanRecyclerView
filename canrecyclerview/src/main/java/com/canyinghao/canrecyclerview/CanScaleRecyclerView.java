@@ -343,14 +343,16 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
 
-        if (mGestureDetector.onTouchEvent(event)) {
+        try {
+            if (mGestureDetector.onTouchEvent(event)) {
+                return true;
+            }
 
-            return true;
+            mScaleGestureDetector.onTouchEvent(event);
 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
-        mScaleGestureDetector.onTouchEvent(event);
 
 
         if (isScale) {
