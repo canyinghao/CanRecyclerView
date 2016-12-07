@@ -3,12 +3,16 @@ package com.canyinghao.canrecyclerview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 
 /**
  * Created by canyinghao on 15/12/17..
@@ -44,9 +48,6 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     private float mMidScaleFactor = 2f;
     private float mMaxScaleFactor = 3f;
 
-    private int mAutoTime = 10;
-    private float mAutoBigger = 1.04f;
-    private float mAutoSmall = 0.96f;
 
     private boolean isScale;
 
@@ -63,6 +64,10 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     private Runnable mAutoScaleRunnable;
 
+    private long mZoomDuration = 200;
+
+    private final Interpolator mZoomInterpolator = new AccelerateDecelerateInterpolator();
+
     public interface OnGestureListener {
         boolean onScale(ScaleGestureDetector detector);
 
@@ -73,49 +78,69 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
 
     /**
+     * 设置缩放时间
+     *
+     * @param duration long
+     */
+    public void setZoomTransitionDuration(long duration) {
+        duration = duration < 0 ? 200 : duration;
+        mZoomDuration = duration;
+    }
+
+
+    /**
      * 双击缩放时平滑缩放
      */
-    private class AutoScaleRunnable implements Runnable {
+    private class AnimatedZoomRunnable implements Runnable {
 
-        private float mTargetScaleFactor;
+        private final long mStartTime;
+        private final float mZoomStart, mZoomEnd;
 
-        private float mGrad;
+        public AnimatedZoomRunnable(final float targetZoom) {
 
+            mStartTime = System.currentTimeMillis();
+            mZoomStart = mCurrentScaleFactor;
+            mZoomEnd = targetZoom;
 
-        private AutoScaleRunnable(float TargetScale, float grad) {
-            mTargetScaleFactor = TargetScale;
-            mGrad = grad;
         }
 
         @Override
         public void run() {
-            if ((mGrad > 1.0f && mCurrentScaleFactor < mTargetScaleFactor)
-                    || (mGrad < 1.0f && mCurrentScaleFactor > mTargetScaleFactor)) {
 
-                mCurrentScaleFactor *= mGrad;
 
-                if (mGrad > 1.0f) {
+            float t = interpolate();
 
-                    if (mCurrentScaleFactor >= mTargetScaleFactor) {
-                        mCurrentScaleFactor = mTargetScaleFactor;
-                    }
+            mCurrentScaleFactor = mZoomStart + t * (mZoomEnd - mZoomStart);
 
-                } else {
 
-                    if (mCurrentScaleFactor <= mTargetScaleFactor) {
-                        mCurrentScaleFactor = mTargetScaleFactor;
-                    }
-
-                }
-                postDelayed(this, mAutoTime);
-            } else {
-                mCurrentScaleFactor = mTargetScaleFactor;
+            if (t < 1f) {
+                postOnAnimation(CanScaleRecyclerView.this, this);
             }
+
 
             checkOffsetBorder();
             invalidate();
+
+
+        }
+
+        private float interpolate() {
+            float t = 1f * (System.currentTimeMillis() - mStartTime) / mZoomDuration;
+            t = Math.min(1f, t);
+            t = mZoomInterpolator.getInterpolation(t);
+            return t;
         }
     }
+
+
+    private void postOnAnimation(View view, Runnable runnable) {
+        if (Build.VERSION.SDK_INT >= 16) {
+            view.postOnAnimation(runnable);
+        } else {
+            view.postDelayed(runnable, 16L);
+        }
+    }
+
 
     private class CanLinearLayoutManager extends LinearLayoutManager {
         public CanLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
@@ -151,8 +176,6 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 mMinScaleFactor = ta.getFloat(attr, 0.8f);
             } else if (attr == R.styleable.CanScaleRecyclerView_maxScaleFactor) {
                 mMaxScaleFactor = ta.getFloat(attr, 3);
-            } else if (attr == R.styleable.CanScaleRecyclerView_autoScaleTime) {
-                mAutoTime = ta.getInt(attr, 10);
             } else if (attr == R.styleable.CanScaleRecyclerView_isTwoStage) {
                 isTwoStage = ta.getBoolean(attr, false);
             } else if (attr == R.styleable.CanScaleRecyclerView_isDoubleScale) {
@@ -211,9 +234,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 }
 
 
-                CanScaleRecyclerView.this.
-
-                        invalidate();
+                CanScaleRecyclerView.this.invalidate();
 
 
                 if (mOnGestureListener != null)
@@ -233,13 +254,15 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
                 if (mCurrentScaleFactor < FACTOR) {
 
-                    postDelayed(new AutoScaleRunnable(FACTOR, mAutoBigger), mAutoTime);
+
+                    postOnAnimation(CanScaleRecyclerView.this, new AnimatedZoomRunnable(FACTOR));
 
                 } else {
 
                     if (!isTwoStage && mCurrentScaleFactor > mMidScaleFactor) {
 
-                        postDelayed(new AutoScaleRunnable(mMidScaleFactor, mAutoSmall), mAutoTime);
+
+                        postOnAnimation(CanScaleRecyclerView.this, new AnimatedZoomRunnable(mMidScaleFactor));
                     }
 
 
@@ -281,16 +304,15 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
                         if (mCurrentScaleFactor < mMidScaleFactor) {
 
+                            mAutoScaleRunnable = new AnimatedZoomRunnable(mMidScaleFactor);
 
-                            mAutoScaleRunnable = new AutoScaleRunnable(mMidScaleFactor, mAutoBigger);
                         } else if (mCurrentScaleFactor < mMaxScaleFactor) {
 
 
-                            mAutoScaleRunnable = new AutoScaleRunnable(mMaxScaleFactor, mAutoBigger);
+                            mAutoScaleRunnable = new AnimatedZoomRunnable(mMaxScaleFactor);
                         } else {
 
-
-                            mAutoScaleRunnable = new AutoScaleRunnable(FACTOR, mAutoSmall);
+                            mAutoScaleRunnable = new AnimatedZoomRunnable(FACTOR);
                         }
 
                     } else {
@@ -298,18 +320,18 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
                         if (mCurrentScaleFactor < mMidScaleFactor) {
 
+                            mAutoScaleRunnable = new AnimatedZoomRunnable(mMidScaleFactor);
 
-                            mAutoScaleRunnable = new AutoScaleRunnable(mMidScaleFactor, mAutoBigger);
                         } else {
-
-
-                            mAutoScaleRunnable = new AutoScaleRunnable(FACTOR, mAutoSmall);
+                            mAutoScaleRunnable = new AnimatedZoomRunnable(FACTOR);
                         }
 
 
                     }
 
-                    postDelayed(mAutoScaleRunnable, mAutoTime);
+
+                    postOnAnimation(CanScaleRecyclerView.this, mAutoScaleRunnable);
+
                 }
 
 
@@ -459,14 +481,6 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     }
 
-
-    public int getAutoTime() {
-        return mAutoTime;
-    }
-
-    public void setAutoTime(int autoTime) {
-        this.mAutoTime = autoTime;
-    }
 
     public float getMinScaleFactor() {
         return mMinScaleFactor;

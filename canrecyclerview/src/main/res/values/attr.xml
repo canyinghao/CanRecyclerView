@@ -5,7 +5,6 @@
     <declare-styleable name="CanScaleRecyclerView">
         <attr name="minScaleFactor" format="float"/>
         <attr name="maxScaleFactor" format="float"/>
-        <attr name="autoScaleTime"  format="integer"/>
         <attr name="isTwoStage"  format="boolean"/>
         <attr name="isDoubleScale"  format="boolean"/>
     </declare-styleable>
