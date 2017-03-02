@@ -1,14 +1,13 @@
 package com.canyinghao.canrecyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-public class FullyLinearLayoutManager extends LinearLayoutManager {
+public class FullyLinearLayoutManager extends LinearLayoutManagerFix {
 
     private static final String TAG = FullyLinearLayoutManager.class.getSimpleName();
 

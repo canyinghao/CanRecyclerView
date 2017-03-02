@@ -21,7 +21,6 @@ public class GridLayoutManagerFix extends GridLayoutManager {
         super(context, spanCount, orientation, reverseLayout);
     }
 
-
     @Override
     public void collectAdjacentPrefetchPositions(int dx, int dy, RecyclerView.State state, LayoutPrefetchRegistry layoutPrefetchRegistry) {
         try {

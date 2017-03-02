@@ -1,13 +1,12 @@
 package com.canyinghao.canrecyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-public class FullyGridLayoutManager extends GridLayoutManager {
+public class FullyGridLayoutManager extends GridLayoutManagerFix {
 
     private int mwidth = 0;
     private int mheight = 0;
