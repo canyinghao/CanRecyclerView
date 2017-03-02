@@ -1,7 +1,6 @@
 package com.canyinghao.canrecyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 /**
@@ -17,7 +16,7 @@ import android.support.v7.widget.RecyclerView;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class CanLinearLayoutManager extends LinearLayoutManager {
+public class CanLinearLayoutManager extends LinearLayoutManagerFix{
     private static final int DEFAULT_EXTRA_LAYOUT_SPACE = 600;
     private int extraLayoutSpace = -1;
 
