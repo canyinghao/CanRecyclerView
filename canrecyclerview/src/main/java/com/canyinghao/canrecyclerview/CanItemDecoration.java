@@ -33,10 +33,15 @@ public class CanItemDecoration extends RecyclerView.ItemDecoration {
 
     public CanItemDecoration(RecyclerView.LayoutManager manager) {
 
-        this.layoutManager = manager;
-        initLayoutManager();
+        setLayoutManager(manager);
 
     }
+
+    public void setLayoutManager(RecyclerView.LayoutManager manager) {
+        this.layoutManager = manager;
+        initLayoutManager();
+    }
+
 
     public CanItemDecoration setHeight(int height) {
         this.height = height;
@@ -129,7 +134,7 @@ public class CanItemDecoration extends RecyclerView.ItemDecoration {
     }
 
 
-    public void initLayoutManager() {
+    private void initLayoutManager() {
 
         if (layoutManager instanceof GridLayoutManager) {
 

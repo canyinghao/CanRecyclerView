@@ -186,6 +186,19 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
 
     }
 
+    /**
+     * 更新LayoutManager
+     */
+    public void updateLayoutManager() {
+
+        layoutManager = recyclerView.getLayoutManager();
+
+        decoration.setLayoutManager(layoutManager);
+
+        initLayoutManager();
+
+    }
+
 
     /**
      * 通过layoutManager获取各种属性值
