@@ -9,7 +9,7 @@
 
 ## 添加依赖
 ```
-compile 'com.canyinghao:canrecyclerview:1.2.1'
+compile 'com.canyinghao:canrecyclerview:1.2.2'
 ```
 
 

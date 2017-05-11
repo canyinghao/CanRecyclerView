@@ -74,6 +74,8 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         boolean onSingleTapConfirmed(MotionEvent e);
 
         boolean onDoubleTap(MotionEvent e);
+
+        boolean onLongClick(MotionEvent e);
     }
 
 
@@ -285,6 +287,16 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
                 //点击
                 return mOnGestureListener != null && mOnGestureListener.onSingleTapConfirmed(e);
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                super.onLongPress(e);
+
+                if (mOnGestureListener != null) {
+                    mOnGestureListener.onLongClick(e);
+                }
+
             }
 
             @Override

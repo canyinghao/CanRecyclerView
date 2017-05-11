@@ -3,6 +3,9 @@ package com.canyinghao.canrecyclerviewdemo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -56,6 +59,29 @@ public class ScaleActivity extends AppCompatActivity {
 
         recycler.setAdapter(adapter);
 
+        recycler.setOnGestureListener(new CanScaleRecyclerView.OnGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                return false;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onLongClick(MotionEvent e) {
+
+                Log.e("Canyinghao","onLongClick");
+                return false;
+            }
+        });
 
 
     }
