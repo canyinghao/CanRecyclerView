@@ -16,6 +16,8 @@ public class RecyclerViewEmpty extends RecyclerView {
 
     protected boolean hideOrShowRV;
 
+    public static  int CACHE_SIZE = 0;
+
     protected AdapterDataObserver emptyObserver = new AdapterDataObserver() {
 
 
@@ -73,6 +75,7 @@ public class RecyclerViewEmpty extends RecyclerView {
         }
         if (adapter != null && emptyObserver != null) {
             adapter.registerAdapterDataObserver(emptyObserver);
+            setItemViewCacheSize(CACHE_SIZE);
         }
         super.setAdapter(adapter);
 
