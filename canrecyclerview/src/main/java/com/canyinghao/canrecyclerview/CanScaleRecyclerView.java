@@ -53,7 +53,26 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     private boolean isTwoStage;
 
-    private boolean isDoubleScale = true;
+
+//    是否回调单击事件
+    private boolean isCanSingleTapListener = true;
+
+//    是否回调双击事件
+    private boolean isCanDoubleTapListener = true;
+
+//    是否回调缩放事件
+    private boolean isCanScaleListener = true;
+    //    是否回调缩放事件
+    private boolean isCanLongListener = true;
+
+//    是否可双击缩放
+    private boolean isCanDoubleScale = true;
+
+//    是否可缩放
+    private boolean isCanScale = true;
+
+
+
 
     private GestureDetector mGestureDetector;
 
@@ -181,7 +200,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             } else if (attr == R.styleable.CanScaleRecyclerView_isTwoStage) {
                 isTwoStage = ta.getBoolean(attr, false);
             } else if (attr == R.styleable.CanScaleRecyclerView_isDoubleScale) {
-                isDoubleScale = ta.getBoolean(attr, true);
+                isCanDoubleScale = ta.getBoolean(attr, true);
             }
         }
         ta.recycle();
@@ -221,31 +240,39 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
 
+                if(isCanScale){
 
-                float tempFactor = mCurrentScaleFactor;
-                mCurrentScaleFactor *= detector.getScaleFactor();
-                mCurrentScaleFactor = Math.max(mMinScaleFactor, Math.min(mCurrentScaleFactor, mMaxScaleFactor));
+                    float tempFactor = mCurrentScaleFactor;
+                    mCurrentScaleFactor *= detector.getScaleFactor();
+                    mCurrentScaleFactor = Math.max(mMinScaleFactor, Math.min(mCurrentScaleFactor, mMaxScaleFactor));
 
-                if (fromBig) {
-                    if (tempFactor >= mCurrentScaleFactor) {
+                    if (fromBig) {
+                        if (tempFactor >= mCurrentScaleFactor) {
 
-                        if (mCurrentScaleFactor <= FACTOR) {
-                            mCurrentScaleFactor = FACTOR;
+                            if (mCurrentScaleFactor <= FACTOR) {
+                                mCurrentScaleFactor = FACTOR;
+                            }
                         }
                     }
+
+
+                    CanScaleRecyclerView.this.invalidate();
+
+
+                    if (isCanScaleListener&&mOnGestureListener != null)
+                    {
+                        mOnGestureListener.onScale(detector);
+                    }
+                    return true;
+
+                }else{
+
+                   return super.onScale(detector);
                 }
 
 
-                CanScaleRecyclerView.this.invalidate();
 
 
-                if (mOnGestureListener != null)
-
-                {
-                    mOnGestureListener.onScale(detector);
-                }
-
-                return true;
             }
 
 
@@ -285,22 +312,32 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
 
-                //点击
-                return mOnGestureListener != null && mOnGestureListener.onSingleTapConfirmed(e);
+                if(isCanSingleTapListener){
+                    //点击
+                    return mOnGestureListener != null && mOnGestureListener.onSingleTapConfirmed(e);
+
+                }else{
+                    return super.onSingleTapConfirmed(e);
+                }
+
             }
 
             @Override
             public void onLongPress(MotionEvent e) {
                 super.onLongPress(e);
 
-                if (mOnGestureListener != null) {
-                    mOnGestureListener.onLongClick(e);
+                if(isCanLongListener){
+                    if (mOnGestureListener != null) {
+                        mOnGestureListener.onLongClick(e);
+                    }
                 }
+
 
             }
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
+
 
                 //双击缩放
                 centerX = e.getRawX();
@@ -310,7 +347,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                     removeCallbacks(mAutoScaleRunnable);
                 }
 
-                if (isDoubleScale) {
+                if (isCanDoubleScale) {
 
                     if (isTwoStage) {
 
@@ -347,10 +384,15 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
                 }
 
 
-                if (mOnGestureListener != null) {
-                    mOnGestureListener.onDoubleTap(e);
+                if(isCanDoubleTapListener){
+                    if (mOnGestureListener != null) {
+                        mOnGestureListener.onDoubleTap(e);
+                    }
+                    return true;
+                }else{
+                    return super.onDoubleTap(e);
                 }
-                return true;
+
             }
         }
 
@@ -359,82 +401,98 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
-        if (mCurrentScaleFactor <= 1.0f) {
-            mOffsetX = 0.0f;
-            mOffsetY = 0.0f;
+
+        if(isCanScale){
+            canvas.save(Canvas.MATRIX_SAVE_FLAG);
+            if (mCurrentScaleFactor <= 1.0f) {
+                mOffsetX = 0.0f;
+                mOffsetY = 0.0f;
+            }
+
+
+            canvas.translate(mOffsetX, mOffsetY);//偏移
+
+            canvas.scale(mCurrentScaleFactor, mCurrentScaleFactor, centerX, centerY);//缩放
+            super.dispatchDraw(canvas);
+            canvas.restore();
+        }else{
+            super.dispatchDraw(canvas);
         }
 
-
-        canvas.translate(mOffsetX, mOffsetY);//偏移
-
-        canvas.scale(mCurrentScaleFactor, mCurrentScaleFactor, centerX, centerY);//缩放
-        super.dispatchDraw(canvas);
-        canvas.restore();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
 
-        try {
-            if (mGestureDetector.onTouchEvent(event)) {
+        if(isCanScale){
+
+            super.onTouchEvent(event);
+
+            try {
+                if (mGestureDetector.onTouchEvent(event)) {
+                    return true;
+                }
+
+                mScaleGestureDetector.onTouchEvent(event);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            if (isScale) {
+
                 return true;
             }
 
-            mScaleGestureDetector.onTouchEvent(event);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            if (mCurrentScaleFactor == 1) {
+
+                return true;
+            }
 
 
-        if (isScale) {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    mLastTouchX = event.getX();
+                    mLastTouchY = event.getY();
+
+                    break;
+                case MotionEvent.ACTION_MOVE:
+
+                    float mainPointX = event.getX();
+                    float mainPointY = event.getY();
+
+
+                    //滑动时偏移
+                    mOffsetX += (mainPointX - mLastTouchX);
+
+
+                    mOffsetY += (mainPointY - mLastTouchY);
+
+
+                    mLastTouchX = mainPointX;
+                    mLastTouchY = mainPointY;
+
+
+                    checkOffsetBorder();
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    mLastTouchX = event.getX();
+                    mLastTouchY = event.getY();
+                    break;
+            }
 
             return true;
+
+        }else{
+          return   super.onTouchEvent(event);
+
         }
 
 
-        if (mCurrentScaleFactor == 1) {
-
-            return true;
-        }
-
-
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                mLastTouchX = event.getX();
-                mLastTouchY = event.getY();
-
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                float mainPointX = event.getX();
-                float mainPointY = event.getY();
-
-
-                //滑动时偏移
-                mOffsetX += (mainPointX - mLastTouchX);
-
-
-                mOffsetY += (mainPointY - mLastTouchY);
-
-
-                mLastTouchX = mainPointX;
-                mLastTouchY = mainPointY;
-
-
-                checkOffsetBorder();
-                invalidate();
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                mLastTouchX = event.getX();
-                mLastTouchY = event.getY();
-                break;
-        }
-
-        return true;
     }
 
 
@@ -494,6 +552,32 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     }
 
 
+
+
+    public void setCanSingleTapListener(boolean canSingleTapListener) {
+        isCanSingleTapListener = canSingleTapListener;
+    }
+
+    public void setCanDoubleTapListener(boolean canDoubleTapListener) {
+        isCanDoubleTapListener = canDoubleTapListener;
+    }
+
+    public void setCanScaleListener(boolean canScaleListener) {
+        isCanScaleListener = canScaleListener;
+    }
+
+    public void setCanLongListener(boolean canLongListener) {
+        isCanLongListener = canLongListener;
+    }
+
+    public void setCanDoubleScale(boolean canDoubleScale) {
+        isCanDoubleScale = canDoubleScale;
+    }
+
+    public void setCanScale(boolean canScale) {
+        isCanScale = canScale;
+    }
+
     public float getMinScaleFactor() {
         return mMinScaleFactor;
     }
@@ -518,13 +602,6 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         isTwoStage = twoStage;
     }
 
-    public boolean isDoubleScale() {
-        return isDoubleScale;
-    }
-
-    public void setDoubleScale(boolean doubleScale) {
-        isDoubleScale = doubleScale;
-    }
 
     public OnGestureListener getOnGestureListener() {
         return mOnGestureListener;

@@ -49,6 +49,8 @@ public class CanRecyclerViewPager extends RecyclerView {
     protected int mCurrentPosition;
     protected int mLocation;
 
+    private boolean isRegInsertedObserver = true;
+
 
     public CanRecyclerViewPager(Context context) {
         this(context, null);
@@ -84,6 +86,13 @@ public class CanRecyclerViewPager extends RecyclerView {
 
     }
 
+    public boolean isRegInsertedObserver() {
+        return isRegInsertedObserver;
+    }
+
+    public void setRegInsertedObserver(boolean regInsertedObserver) {
+        isRegInsertedObserver = regInsertedObserver;
+    }
 
     private void setScale(final float scale) {
 
@@ -234,12 +243,14 @@ public class CanRecyclerViewPager extends RecyclerView {
 
         this.mAdapter = adapter;
 
-        Adapter oldAdapter = getAdapter();
-        if (oldAdapter != null && insertedObserver != null) {
-            oldAdapter.unregisterAdapterDataObserver(insertedObserver);
-        }
-        if (adapter != null && insertedObserver != null) {
-            adapter.registerAdapterDataObserver(insertedObserver);
+        if(isRegInsertedObserver){
+            Adapter oldAdapter = getAdapter();
+            if (oldAdapter != null && insertedObserver != null) {
+                oldAdapter.unregisterAdapterDataObserver(insertedObserver);
+            }
+            if (adapter != null && insertedObserver != null) {
+                adapter.registerAdapterDataObserver(insertedObserver);
+            }
         }
         super.setAdapter(adapter);
 
