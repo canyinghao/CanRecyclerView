@@ -90,6 +90,7 @@ public class ScaleActivity extends AppCompatActivity {
             public boolean onLongClick(MotionEvent e) {
 
                 Log.e("Canyinghao","onLongClick");
+                recycler.resetSize();
                 return false;
             }
         });

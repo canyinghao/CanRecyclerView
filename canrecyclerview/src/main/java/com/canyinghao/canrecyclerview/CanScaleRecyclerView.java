@@ -553,6 +553,12 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
 
 
+    public void resetSize(){
+
+        if(mCurrentScaleFactor!=FACTOR){
+            postOnAnimation(CanScaleRecyclerView.this, new AnimatedZoomRunnable(FACTOR));
+        }
+    }
 
     public void setCanSingleTapListener(boolean canSingleTapListener) {
         isCanSingleTapListener = canSingleTapListener;
@@ -602,6 +608,30 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         isTwoStage = twoStage;
     }
 
+
+    public boolean isCanSingleTapListener() {
+        return isCanSingleTapListener;
+    }
+
+    public boolean isCanDoubleTapListener() {
+        return isCanDoubleTapListener;
+    }
+
+    public boolean isCanScaleListener() {
+        return isCanScaleListener;
+    }
+
+    public boolean isCanLongListener() {
+        return isCanLongListener;
+    }
+
+    public boolean isCanDoubleScale() {
+        return isCanDoubleScale;
+    }
+
+    public boolean isCanScale() {
+        return isCanScale;
+    }
 
     public OnGestureListener getOnGestureListener() {
         return mOnGestureListener;
