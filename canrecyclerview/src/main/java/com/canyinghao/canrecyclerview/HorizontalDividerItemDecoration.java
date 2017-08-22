@@ -5,7 +5,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DimenRes;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 
@@ -43,13 +45,39 @@ public class HorizontalDividerItemDecoration extends FlexibleDividerDecoration {
 
     @Override
     protected void setItemOffsets(Rect outRect, int position, RecyclerView parent) {
-       int size = getDividerSize(position, parent);
-        if(position==0){
-            outRect.set(0, size, 0, 0);
+
+
+        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+        if(layoutManager instanceof GridLayoutManager){
+            GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
+            int count = gridLayoutManager.getSpanCount();
+            setItemDividerSize(outRect, position, parent, count);
+
+        }else if(layoutManager instanceof StaggeredGridLayoutManager){
+            StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
+            int count = gridLayoutManager.getSpanCount();
+            setItemDividerSize(outRect, position, parent, count);
         }else{
-            outRect.set(0, size, 0, size);
+            int count = 1;
+            setItemDividerSize(outRect, position, parent, count);
         }
 
+
+    }
+
+    private void setItemDividerSize(Rect outRect, int position, RecyclerView parent, int count) {
+        int size = getDividerSize(position, parent);
+        if (mOnlyFirst) {
+            if (position < count) {
+                outRect.set(0, size, 0, 0);
+            }
+        } else {
+            if (position < count ) {
+                outRect.set(0, size, 0, size);
+            } else {
+                outRect.set(0, 0, 0, size);
+            }
+        }
     }
 
     private int getDividerSize(int position, RecyclerView parent) {

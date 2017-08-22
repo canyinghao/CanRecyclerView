@@ -49,23 +49,30 @@ public class VerticalDividerItemDecoration extends FlexibleDividerDecoration {
         if(layoutManager instanceof GridLayoutManager){
             GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
             int index= gridLayoutManager.getSpanSizeLookup().getSpanIndex(position,gridLayoutManager.getSpanCount());
-            int size = getDividerSize(position, parent);
-            if(index==0){
-                outRect.set(size, 0, 0, 0);
-            }else{
-                outRect.set(size, 0, size, 0);
-            }
+            setItemDividerSize(outRect, position, parent, index);
+
         }else if(layoutManager instanceof StaggeredGridLayoutManager){
             StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
             int index = position%gridLayoutManager.getSpanCount();
-            int size = getDividerSize(position, parent);
+            setItemDividerSize(outRect, position, parent, index);
+        }else{
+
+            setItemDividerSize(outRect, position, parent, position);
+        }
+    }
+
+    private void setItemDividerSize(Rect outRect, int position, RecyclerView parent, int index) {
+        int size = getDividerSize(position, parent);
+        if(mOnlyFirst){
             if(index==0){
-                outRect.set(size, 0, 0, 0);
-            }else{
-                outRect.set(size, 0, size, 0);
+                outRect.set(size, 0,0, 0);
             }
         }else{
-            outRect.set(0, 0, getDividerSize(position, parent), 0);
+            if(index==0){
+                outRect.set(size, 0,size, 0);
+            }else{
+                outRect.set(0, 0, size, 0);
+            }
         }
     }
 
