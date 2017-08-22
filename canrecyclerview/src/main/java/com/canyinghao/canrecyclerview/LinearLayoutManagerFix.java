@@ -29,4 +29,13 @@ public class LinearLayoutManagerFix extends LinearLayoutManager {
             e.printStackTrace();
         }
     }
+
+
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        try {
+            super.onLayoutChildren(recycler, state);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 }

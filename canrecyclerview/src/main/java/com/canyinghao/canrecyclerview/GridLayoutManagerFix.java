@@ -29,4 +29,12 @@ public class GridLayoutManagerFix extends GridLayoutManager {
             e.printStackTrace();
         }
     }
+
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        try {
+            super.onLayoutChildren(recycler, state);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 }
