@@ -5,7 +5,9 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DimenRes;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 
 
@@ -43,7 +45,28 @@ public class VerticalDividerItemDecoration extends FlexibleDividerDecoration {
 
     @Override
     protected void setItemOffsets(Rect outRect, int position, RecyclerView parent) {
-        outRect.set(0, 0, getDividerSize(position, parent), 0);
+       RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+        if(layoutManager instanceof GridLayoutManager){
+            GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
+            int index= gridLayoutManager.getSpanSizeLookup().getSpanIndex(position,gridLayoutManager.getSpanCount());
+            int size = getDividerSize(position, parent);
+            if(index==0){
+                outRect.set(size, 0, 0, 0);
+            }else{
+                outRect.set(size, 0, size, 0);
+            }
+        }else if(layoutManager instanceof StaggeredGridLayoutManager){
+            StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
+            int index = position%gridLayoutManager.getSpanCount();
+            int size = getDividerSize(position, parent);
+            if(index==0){
+                outRect.set(size, 0, 0, 0);
+            }else{
+                outRect.set(size, 0, size, 0);
+            }
+        }else{
+            outRect.set(0, 0, getDividerSize(position, parent), 0);
+        }
     }
 
     private int getDividerSize(int position, RecyclerView parent) {

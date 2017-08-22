@@ -93,11 +93,13 @@ public class HeaderFooterActivity extends AppCompatActivity implements CanRecycl
 
         recycler.addItemDecoration(new HorizontalDividerItemDecoration.Builder(this)
                 .color(Color.TRANSPARENT)
-                .size(2).build());
+                .size(20)
+                .build());
 
         recycler.addItemDecoration(new VerticalDividerItemDecoration.Builder(this)
                 .color(Color.TRANSPARENT)
-                .size(2).build());
+                .size(20)
+                .build());
 
 
         recycler.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
