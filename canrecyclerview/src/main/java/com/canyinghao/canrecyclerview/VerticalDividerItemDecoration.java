@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.DimenRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -45,34 +46,78 @@ public class VerticalDividerItemDecoration extends FlexibleDividerDecoration {
 
     @Override
     protected void setItemOffsets(Rect outRect, int position, RecyclerView parent) {
-       RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
-        if(layoutManager instanceof GridLayoutManager){
-            GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
-            int index= gridLayoutManager.getSpanSizeLookup().getSpanIndex(position,gridLayoutManager.getSpanCount());
-            setItemDividerSize(outRect, position, parent, index);
 
-        }else if(layoutManager instanceof StaggeredGridLayoutManager){
-            StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
-            int index = position%gridLayoutManager.getSpanCount();
-            setItemDividerSize(outRect, position, parent, index);
+        if(mNewStyle){
+            RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+            if(layoutManager instanceof GridLayoutManager){
+                GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
+                int spanCount = gridLayoutManager.getSpanCount();
+                GridLayoutManager.SpanSizeLookup lookup = gridLayoutManager.getSpanSizeLookup();
+                int index  =0;
+                int spanSizeCount =1;
+                int spanSize  =  lookup.getSpanSize(position);
+                if(mSpanIndexProvider!=null){
+                     index= mSpanIndexProvider.getSpanIndex(position,parent);
+                     spanSizeCount = mSpanIndexProvider.getSpanCount(position,parent);
+                }else{
+                    index= lookup.getSpanIndex(position,spanCount);
+                    index =index/spanSize;
+                    spanSizeCount = spanCount/spanSize;
+                }
+
+                int size = getDividerSize(position, parent);
+
+                int column = index % spanSizeCount;
+
+                if(mOnlyFirst){
+                    if(index==0){
+                        outRect.set(size, 0,0, 0);
+                    }
+                }else{
+
+                    outRect.left = size - column * size / spanSizeCount; // spacing - column * ((1f / spanCount) * spacing)
+                    outRect.right = (column + 1) * size / spanSizeCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                }
+
+
+            }else if(layoutManager instanceof StaggeredGridLayoutManager){
+                StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
+                int spanCount = gridLayoutManager.getSpanCount();
+                int index = position%spanCount;
+                setItemDividerSize(outRect, position, parent, index,spanCount);
+            }else if(layoutManager instanceof LinearLayoutManager){
+                LinearLayoutManager gridLayoutManager =  (LinearLayoutManager)layoutManager;
+                int spanCount = 1;
+                int index = 0;
+                if(gridLayoutManager.getOrientation() == LinearLayoutManager.VERTICAL){
+                     spanCount = 1;
+                     index = 0;
+                }else{
+                    spanCount = gridLayoutManager.getItemCount();
+                    index = position%spanCount;
+                }
+                setItemDividerSize(outRect, position, parent, index,spanCount);
+            }
         }else{
-
-            setItemDividerSize(outRect, position, parent, 0);
+            outRect.set(0, 0, getDividerSize(position, parent), 0);
         }
+
     }
 
-    private void setItemDividerSize(Rect outRect, int position, RecyclerView parent, int index) {
+    private void setItemDividerSize(Rect outRect, int position, RecyclerView parent, int index,int spanCount) {
         int size = getDividerSize(position, parent);
+        int column = position % spanCount; // item column
+
         if(mOnlyFirst){
             if(index==0){
                 outRect.set(size, 0,0, 0);
             }
         }else{
-            if(index==0){
-                outRect.set(size, 0,size, 0);
-            }else{
-                outRect.set(0, 0, size, 0);
-            }
+
+            outRect.left = size - column * size / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+            outRect.right = (column + 1) * size / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
         }
     }
 

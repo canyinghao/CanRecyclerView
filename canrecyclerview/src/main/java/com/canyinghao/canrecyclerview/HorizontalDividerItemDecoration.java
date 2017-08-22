@@ -46,21 +46,27 @@ public class HorizontalDividerItemDecoration extends FlexibleDividerDecoration {
     @Override
     protected void setItemOffsets(Rect outRect, int position, RecyclerView parent) {
 
+        if(mNewStyle){
+            RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
+            if(layoutManager instanceof GridLayoutManager){
+                GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
+                int count = gridLayoutManager.getSpanCount();
+                setItemDividerSize(outRect, position, parent, count);
 
-        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
-        if(layoutManager instanceof GridLayoutManager){
-            GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
-            int count = gridLayoutManager.getSpanCount();
-            setItemDividerSize(outRect, position, parent, count);
+            }else if(layoutManager instanceof StaggeredGridLayoutManager){
+                StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
+                int count = gridLayoutManager.getSpanCount();
+                setItemDividerSize(outRect, position, parent, count);
+            }else{
+                int count = 1;
+                setItemDividerSize(outRect, position, parent, count);
+            }
 
-        }else if(layoutManager instanceof StaggeredGridLayoutManager){
-            StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
-            int count = gridLayoutManager.getSpanCount();
-            setItemDividerSize(outRect, position, parent, count);
         }else{
-            int count = 1;
-            setItemDividerSize(outRect, position, parent, count);
+            outRect.set(0, 0, 0, getDividerSize(position, parent));
         }
+
+
 
 
     }

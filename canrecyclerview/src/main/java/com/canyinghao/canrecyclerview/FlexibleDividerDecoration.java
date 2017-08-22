@@ -32,8 +32,10 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
     protected ColorProvider mColorProvider;
     protected DrawableProvider mDrawableProvider;
     protected SizeProvider mSizeProvider;
+    protected SpanIndexProvider mSpanIndexProvider;
     protected boolean mShowLastDivider;
     protected boolean mOnlyFirst;
+    protected boolean mNewStyle;
     private Paint mPaint;
 
     protected FlexibleDividerDecoration(Builder builder) {
@@ -64,8 +66,10 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         }
 
         mVisibilityProvider = builder.mVisibilityProvider;
+        mSpanIndexProvider = builder.mSpanIndexProvider;
         mShowLastDivider = builder.mShowLastDivider;
         mOnlyFirst = builder.mOnlyFirst;
+        mNewStyle = builder.mNewStyle;
     }
 
     private void setSizeProvider(Builder builder) {
@@ -126,7 +130,11 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
     @Override
     public void getItemOffsets(Rect rect, View v, RecyclerView parent, RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(v);
-        setItemOffsets(rect, position, parent);
+        try{
+            setItemOffsets(rect, position, parent);
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
     }
 
     protected abstract Rect getDividerBound(int position, RecyclerView parent, View child);
@@ -209,6 +217,16 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         int dividerSize(int position, RecyclerView parent);
     }
 
+
+
+    public interface SpanIndexProvider {
+
+
+        int getSpanIndex(int position, RecyclerView parent);
+
+        int getSpanCount(int position, RecyclerView parent);
+    }
+
     public static class Builder<T extends Builder> {
 
         private Context mContext;
@@ -217,6 +235,7 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         private ColorProvider mColorProvider;
         private DrawableProvider mDrawableProvider;
         private SizeProvider mSizeProvider;
+        private SpanIndexProvider mSpanIndexProvider;
         private VisibilityProvider mVisibilityProvider = new VisibilityProvider() {
             @Override
             public boolean shouldHideDivider(int position, RecyclerView parent) {
@@ -225,6 +244,7 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         };
         private boolean mShowLastDivider = false;
         private boolean mOnlyFirst = false;
+        private boolean mNewStyle = false;
 
         public Builder(Context context) {
             mContext = context;
@@ -299,6 +319,11 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
             return (T) this;
         }
 
+        public T spanIndexProvider(SpanIndexProvider provider) {
+            mSpanIndexProvider = provider;
+            return (T) this;
+        }
+
         public T visibilityProvider(VisibilityProvider provider) {
             mVisibilityProvider = provider;
             return (T) this;
@@ -311,6 +336,11 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
 
         public T onlyFirst() {
             mOnlyFirst = true;
+            return (T) this;
+        }
+
+        public T newStyle() {
+            mNewStyle = true;
             return (T) this;
         }
 
