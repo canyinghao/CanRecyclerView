@@ -50,8 +50,21 @@ public class HorizontalDividerItemDecoration extends FlexibleDividerDecoration {
             RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
             if(layoutManager instanceof GridLayoutManager){
                 GridLayoutManager gridLayoutManager =  (GridLayoutManager)layoutManager;
-                int count = gridLayoutManager.getSpanCount();
-                setItemDividerSize(outRect, position, parent, count);
+                GridLayoutManager.SpanSizeLookup lookup =gridLayoutManager.getSpanSizeLookup();
+                int spanCount = gridLayoutManager.getSpanCount();
+                int spanGroup = lookup.getSpanGroupIndex(position,spanCount);
+                int spanSizeCount =1;
+                if(spanGroup==0){
+                    if(mSpanIndexProvider!=null){
+                        spanSizeCount = mSpanIndexProvider.getSpanCount(position,parent);
+                    }else{
+                        int spanSize  =  lookup.getSpanSize(position);
+                        spanSizeCount = spanCount/spanSize;
+                    }
+                }else{
+                    spanSizeCount = 0;
+                }
+                setItemDividerSize(outRect, position, parent, spanSizeCount);
 
             }else if(layoutManager instanceof StaggeredGridLayoutManager){
                 StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
