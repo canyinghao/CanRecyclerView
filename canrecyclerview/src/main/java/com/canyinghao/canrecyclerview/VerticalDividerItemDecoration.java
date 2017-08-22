@@ -57,7 +57,7 @@ public class VerticalDividerItemDecoration extends FlexibleDividerDecoration {
             setItemDividerSize(outRect, position, parent, index);
         }else{
 
-            setItemDividerSize(outRect, position, parent, position);
+            setItemDividerSize(outRect, position, parent, 0);
         }
     }
 
