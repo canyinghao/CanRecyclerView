@@ -46,6 +46,15 @@ public class HorizontalDividerItemDecoration extends FlexibleDividerDecoration {
     @Override
     protected void setItemOffsets(Rect outRect, int position, RecyclerView parent) {
 
+        try{
+            setOutRect(outRect, position, parent);
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setOutRect(Rect outRect, int position, RecyclerView parent) {
         if(mNewStyle){
             RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
             if(layoutManager instanceof GridLayoutManager){
@@ -53,18 +62,20 @@ public class HorizontalDividerItemDecoration extends FlexibleDividerDecoration {
                 GridLayoutManager.SpanSizeLookup lookup =gridLayoutManager.getSpanSizeLookup();
                 int spanCount = gridLayoutManager.getSpanCount();
                 int spanGroup = lookup.getSpanGroupIndex(position,spanCount);
-                int spanSizeCount =1;
-                if(spanGroup==0){
-                    if(mSpanIndexProvider!=null){
-                        spanSizeCount = mSpanIndexProvider.getSpanCount(position,parent);
-                    }else{
-                        int spanSize  =  lookup.getSpanSize(position);
-                        spanSizeCount = spanCount/spanSize;
+
+                int size = getDividerSize(position, parent);
+                if (mOnlyFirst) {
+                    if (spanGroup==0) {
+                        outRect.set(0, size, 0, 0);
                     }
-                }else{
-                    spanSizeCount = 0;
+                } else {
+                    if (spanGroup==0) {
+                        outRect.set(0, size, 0, size);
+                    } else {
+                        outRect.set(0, 0, 0, size);
+                    }
                 }
-                setItemDividerSize(outRect, position, parent, spanSizeCount);
+
 
             }else if(layoutManager instanceof StaggeredGridLayoutManager){
                 StaggeredGridLayoutManager gridLayoutManager =  (StaggeredGridLayoutManager)layoutManager;
@@ -78,10 +89,6 @@ public class HorizontalDividerItemDecoration extends FlexibleDividerDecoration {
         }else{
             outRect.set(0, 0, 0, getDividerSize(position, parent));
         }
-
-
-
-
     }
 
     private void setItemDividerSize(Rect outRect, int position, RecyclerView parent, int count) {

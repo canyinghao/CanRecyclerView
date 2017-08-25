@@ -2,7 +2,6 @@ package com.canyinghao.canrecyclerview;
 
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -21,26 +20,12 @@ import android.view.View;
  * limitations under the License.
  */
 public class CanItemDecoration extends RecyclerView.ItemDecoration {
-    private int height;
-    private int width;
-    private int rowSpan = 1;
 
-    private boolean isReversed;
-    private boolean isVertical;
+    private int height;
+
 
     private boolean isHeader = true;
-    private RecyclerView.LayoutManager layoutManager;
 
-    public CanItemDecoration(RecyclerView.LayoutManager manager) {
-
-        setLayoutManager(manager);
-
-    }
-
-    public void setLayoutManager(RecyclerView.LayoutManager manager) {
-        this.layoutManager = manager;
-        initLayoutManager();
-    }
 
 
     public CanItemDecoration setHeight(int height) {
@@ -49,126 +34,111 @@ public class CanItemDecoration extends RecyclerView.ItemDecoration {
         return this;
     }
 
-    public CanItemDecoration setWidth(int width) {
-        this.width = width;
-
-        return this;
-    }
 
     public CanItemDecoration setIsHeader(boolean isHeader) {
 
-
         this.isHeader = isHeader;
-
         return this;
     }
+
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
 
-        boolean relatedPosition = false;
-
-        initLayoutManager();
-
-        if (isHeader) {
-
-            relatedPosition = parent.getChildLayoutPosition(view) < rowSpan;
-
-        } else {
-
-            int lastSum = 1;
-
-
-            int itemCount = layoutManager.getItemCount();
-
-            if (itemCount > 0 && rowSpan > 1) {
-
-                lastSum = itemCount % rowSpan;
-
-                if (lastSum == 0) {
-                    lastSum = rowSpan;
-                }
-            }
-
-            int count = itemCount - lastSum;
-
-
-            int lastPosition = parent.getChildLayoutPosition(view);
-
-
-            relatedPosition = lastPosition >= count;
-
-        }
-
-
-        int heightOffset = relatedPosition && isVertical ? height : 0;
-        int widthOffset = relatedPosition && !isVertical ? width : 0;
-
-        if (isHeader) {
-
-            if (isReversed) {
-                outRect.bottom = heightOffset;
-                outRect.right = widthOffset;
-            } else {
-                outRect.top = heightOffset;
-                outRect.left = widthOffset;
-            }
-        } else {
-
-            if (isReversed) {
-
-                outRect.top = heightOffset;
-                outRect.left = widthOffset;
-
-            } else {
-
-
-                outRect.bottom = heightOffset;
-                outRect.right = widthOffset;
-            }
+        try {
+            setOutRect(outRect, view, parent);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
 
 
     }
 
-
-    private void initLayoutManager() {
-
+    private void setOutRect(Rect outRect, View view, RecyclerView parent) {
+        RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
 
+            int position = parent.getChildAdapterPosition(view);
 
-            GridLayoutManager grid = (GridLayoutManager) layoutManager;
+            GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            GridLayoutManager.SpanSizeLookup lookup = gridLayoutManager.getSpanSizeLookup();
+
+            int spanCount = gridLayoutManager.getSpanCount();
+            int spanGroup = lookup.getSpanGroupIndex(position, spanCount);
+
+            int count = gridLayoutManager.getItemCount();
+            int lastGroup = lookup.getSpanGroupIndex(count - 1, spanCount);
+
+            if (isHeader && spanGroup == 0) {
+                outRect.set(0, height, 0, 0);
+            }
+
+            if (!isHeader && spanGroup == lastGroup) {
+
+                outRect.set(0, 0, 0, height);
+
+            }
+
+        } else {
+
+            int rowSpan = 1;
+
+            if (layoutManager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
+                rowSpan = gridLayoutManager.getSpanCount();
+            }
 
 
-            this.rowSpan = grid.getSpanCount();
+            boolean relatedPosition = false;
 
-            this.isReversed = grid.getReverseLayout();
 
-            this.isVertical = grid.getOrientation() == LinearLayoutManager.VERTICAL;
+            if (isHeader) {
 
-        } else if (layoutManager instanceof LinearLayoutManager) {
+                relatedPosition = parent.getChildLayoutPosition(view) < rowSpan;
 
-            LinearLayoutManager linear = (LinearLayoutManager) layoutManager;
+            } else {
 
-            this.rowSpan = 1;
-            this.isReversed = linear.getReverseLayout();
+                int lastSum = 1;
 
-            this.isVertical = linear.getOrientation() == LinearLayoutManager.VERTICAL;
 
-        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+                int itemCount = layoutManager.getItemCount();
 
-            StaggeredGridLayoutManager staggeredGrid = (StaggeredGridLayoutManager) layoutManager;
+                if (itemCount > 0 && rowSpan > 1) {
 
-            this.rowSpan = staggeredGrid.getSpanCount();
+                    lastSum = itemCount % rowSpan;
 
-            this.isReversed = staggeredGrid.getReverseLayout();
+                    if (lastSum == 0) {
+                        lastSum = rowSpan;
+                    }
+                }
 
-            this.isVertical = staggeredGrid.getOrientation() == LinearLayoutManager.VERTICAL;
+                int count = itemCount - lastSum;
+
+
+                int lastPosition = parent.getChildLayoutPosition(view);
+
+
+                relatedPosition = lastPosition >= count;
+
+            }
+
+
+            if (relatedPosition) {
+                if (isHeader) {
+
+                    outRect.set(0, height, 0, 0);
+
+                } else {
+
+                    outRect.set(0, 0, 0, height);
+
+                }
+            }
+
+
         }
-
-
     }
 
 

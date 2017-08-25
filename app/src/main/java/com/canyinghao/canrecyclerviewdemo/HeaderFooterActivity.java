@@ -4,8 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -104,8 +103,8 @@ public class HeaderFooterActivity extends AppCompatActivity implements CanRecycl
                 .build());
 
 
-        recycler.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
-//        recycler.setLayoutManager(new GridLayoutManager(this,2, LinearLayoutManager.HORIZONTAL,true));
+//        recycler.setLayoutManager(new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL));
+        recycler.setLayoutManager(new GridLayoutManager(this,3));
 //        recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
         recycler.setAdapter(adapter);
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -36,6 +37,7 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
     protected boolean mShowLastDivider;
     protected boolean mOnlyFirst;
     protected boolean mNewStyle;
+    protected boolean mNoDrawOver;
     private Paint mPaint;
 
     protected FlexibleDividerDecoration(Builder builder) {
@@ -70,6 +72,7 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         mShowLastDivider = builder.mShowLastDivider;
         mOnlyFirst = builder.mOnlyFirst;
         mNewStyle = builder.mNewStyle;
+        mNoDrawOver = builder.mNoDrawOver;
     }
 
     private void setSizeProvider(Builder builder) {
@@ -86,6 +89,9 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+        if(mNoDrawOver){
+            return;
+        }
         int lastChildPosition = -1;
         int childCount = mShowLastDivider ? parent.getChildCount() : parent.getChildCount() - 1;
         for (int i = 0; i < childCount; i++) {
@@ -245,6 +251,7 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         private boolean mShowLastDivider = false;
         private boolean mOnlyFirst = false;
         private boolean mNewStyle = false;
+        private boolean mNoDrawOver = false;
 
         public Builder(Context context) {
             mContext = context;
@@ -266,6 +273,9 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
         }
 
         public T color(final int color) {
+            if(color== Color.TRANSPARENT){
+                noDrawOver();
+            }
             return colorProvider(new ColorProvider() {
                 @Override
                 public int dividerColor(int position, RecyclerView parent) {
@@ -343,7 +353,10 @@ public abstract class FlexibleDividerDecoration extends RecyclerView.ItemDecorat
             mNewStyle = true;
             return (T) this;
         }
-
+        public T noDrawOver() {
+            mNoDrawOver = true;
+            return (T) this;
+        }
 
         protected void checkBuilderParams() {
             if (mPaintProvider != null) {

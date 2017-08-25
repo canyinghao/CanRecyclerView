@@ -174,7 +174,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
         if (decoration != null) {
             recyclerView.removeItemDecoration(decoration);
         }
-        decoration = new CanItemDecoration(layoutManager).setIsHeader(isHeader);
+        decoration = new CanItemDecoration().setIsHeader(isHeader);
         recyclerView.addItemDecoration(decoration);
 
         recyclerView.removeOnScrollListener(onScrollListener);
@@ -186,18 +186,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
 
     }
 
-    /**
-     * 更新LayoutManager
-     */
-    public void updateLayoutManager() {
 
-        layoutManager = recyclerView.getLayoutManager();
-
-        decoration.setLayoutManager(layoutManager);
-
-        initLayoutManager();
-
-    }
 
 
     /**
@@ -255,13 +244,12 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
             if (decoration != null) {
 
                 int vertical = 0;
-                int horizontal = 0;
+
                 if (getLayoutParams() instanceof MarginLayoutParams) {
                     final MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
                     vertical = layoutParams.topMargin + layoutParams.bottomMargin;
-                    horizontal = layoutParams.leftMargin + layoutParams.rightMargin;
                 }
-                decoration.setHeight(getHeight() + vertical).setWidth(getWidth() + horizontal);
+                decoration.setHeight(getHeight() + vertical);
                 recyclerView.invalidateItemDecorations();
 
             }

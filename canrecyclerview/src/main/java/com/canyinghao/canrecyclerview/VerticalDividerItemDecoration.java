@@ -47,6 +47,16 @@ public class VerticalDividerItemDecoration extends FlexibleDividerDecoration {
     @Override
     protected void setItemOffsets(Rect outRect, int position, RecyclerView parent) {
 
+        try{
+            setOutRect(outRect, position, parent);
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void setOutRect(Rect outRect, int position, RecyclerView parent) {
         if(mNewStyle){
             RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();
             if(layoutManager instanceof GridLayoutManager){
@@ -102,7 +112,6 @@ public class VerticalDividerItemDecoration extends FlexibleDividerDecoration {
         }else{
             outRect.set(0, 0, getDividerSize(position, parent), 0);
         }
-
     }
 
     private void setItemDividerSize(Rect outRect, int position, RecyclerView parent, int index,int spanCount) {
