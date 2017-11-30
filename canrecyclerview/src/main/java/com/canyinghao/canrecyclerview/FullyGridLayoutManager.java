@@ -106,7 +106,6 @@ public class FullyGridLayoutManager extends GridLayoutManagerFix {
                     recycler.recycleView(view);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

@@ -93,8 +93,7 @@ public class FullyLinearLayoutManager extends LinearLayoutManagerFix {
                 recycler.recycleView(view);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+
         }
     }
 }
