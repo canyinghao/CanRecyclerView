@@ -181,7 +181,7 @@ public class ViewPagerActivity extends Activity {
         adapter.setRatio(1);
 
         if(Build.VERSION.SDK_INT>=11){
-            viewpager.addScaleListener(0.9f);
+//            viewpager.addScaleListener(0.9f);
         }
 
         viewpager.setAdapter(adapter);

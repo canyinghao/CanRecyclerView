@@ -492,6 +492,12 @@ public class CanRecyclerViewPager extends RecyclerView {
 
     }
 
+    public void reset(){
+        mCurrentPosition = 0;
+        newPosition = 0;
+
+    }
+
 
     private int getFlingCountXY(int velocitx, int velocity) {
 
