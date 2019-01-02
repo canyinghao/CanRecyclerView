@@ -402,22 +402,28 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
     @Override
     protected void dispatchDraw(Canvas canvas) {
 
-        if(isCanScale){
-            canvas.save(Canvas.MATRIX_SAVE_FLAG);
-            if (mCurrentScaleFactor <= 1.0f) {
-                mOffsetX = 0.0f;
-                mOffsetY = 0.0f;
+        try{
+            if(isCanScale){
+                canvas.save(Canvas.ALL_SAVE_FLAG);
+                if (mCurrentScaleFactor <= 1.0f) {
+                    mOffsetX = 0.0f;
+                    mOffsetY = 0.0f;
+                }
+
+
+                canvas.translate(mOffsetX, mOffsetY);//偏移
+
+                canvas.scale(mCurrentScaleFactor, mCurrentScaleFactor, centerX, centerY);//缩放
+                super.dispatchDraw(canvas);
+                canvas.restore();
+            }else{
+                super.dispatchDraw(canvas);
             }
-
-
-            canvas.translate(mOffsetX, mOffsetY);//偏移
-
-            canvas.scale(mCurrentScaleFactor, mCurrentScaleFactor, centerX, centerY);//缩放
-            super.dispatchDraw(canvas);
-            canvas.restore();
-        }else{
+        }catch (Throwable e){
+            e.printStackTrace();
             super.dispatchDraw(canvas);
         }
+
 
     }
 
