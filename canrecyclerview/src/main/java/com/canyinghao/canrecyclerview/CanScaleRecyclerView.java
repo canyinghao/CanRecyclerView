@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -13,6 +11,12 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import static android.widget.LinearLayout.VERTICAL;
 
 /**
  * Created by canyinghao on 15/12/17..
@@ -169,7 +173,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
         }
 
         @Override
-        public int scrollVerticallyBy(int dy, Recycler recycler, State state) {
+        public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
 
 
             return super.scrollVerticallyBy((int) Math.ceil(dy / mCurrentScaleFactor), recycler, state);
@@ -404,7 +408,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
         try{
             if(isCanScale){
-                canvas.save(Canvas.ALL_SAVE_FLAG);
+                canvas.save();
                 if (mCurrentScaleFactor <= 1.0f) {
                     mOffsetX = 0.0f;
                     mOffsetY = 0.0f;

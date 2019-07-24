@@ -2,10 +2,6 @@ package com.canyinghao.canrecyclerviewdemo;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,9 +14,10 @@ import com.canyinghao.canrecyclerview.HorizontalDividerItemDecoration;
 import com.canyinghao.canrecyclerview.RecyclerViewEmpty;
 import com.canyinghao.canrecyclerview.VerticalDividerItemDecoration;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 
 /**
  * Created by yangjian on 16/7/14.
@@ -28,28 +25,34 @@ import butterknife.OnClick;
 public class HeaderFooterActivity extends AppCompatActivity implements CanRecyclerViewHeaderFooter.OnLoadMoreListener {
 
 
-    @BindView(R.id.toolbar)
+
     Toolbar toolbar;
-    @BindView(R.id.can_content_view)
+
     RecyclerViewEmpty recycler;
-    @BindView(R.id.header)
+
     CanRecyclerViewHeaderFooter header;
-    @BindView(R.id.footer)
+
     CanRecyclerViewHeaderFooter footer;
 
 
-    @BindView(R.id.pb)
+
     ProgressBar pb;
-    @BindView(R.id.tv_loadmore)
+
     TextView tvLoadmore;
 
     CanRVAdapter<String> adapter;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_header);
-        ButterKnife.bind(this);
+
+        toolbar = findViewById(R.id.toolbar);
+        recycler = findViewById(R.id.can_content_view);
+        header = findViewById(R.id.header);
+        footer = findViewById(R.id.footer);
+        pb = findViewById(R.id.pb);
+        tvLoadmore = findViewById(R.id.tv_loadmore);
 
         toolbar.setTitle("CanRecyclerViewHeaderFooter");
 
@@ -114,18 +117,17 @@ public class HeaderFooterActivity extends AppCompatActivity implements CanRecycl
 
         footer.setLoadMoreListener(this);
 
+        findViewById(R.id.iv_head).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "click", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
 
-    @OnClick(R.id.iv_head)
-    public void click(View v) {
 
-
-        Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
-
-
-    }
 
 
     int i = 0;

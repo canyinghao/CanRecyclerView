@@ -1,17 +1,17 @@
 package com.canyinghao.canrecyclerviewdemo;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.canyinghao.canadapter.CanHolderHelper;
 import com.canyinghao.canadapter.CanRVAdapter;
 import com.canyinghao.canrecyclerview.CanScaleRecyclerView;
+import com.facebook.drawee.view.SimpleDraweeView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by yangjian on 16/9/24.
@@ -32,9 +32,10 @@ public class ScaleActivity extends AppCompatActivity {
             @Override
             protected void setView(CanHolderHelper helper, int position, Integer bean) {
 
-                ImageView iv = helper.getImageView(R.id.item_image);
+                SimpleDraweeView iv =  helper.getView(R.id.item_image);
+                iv.setAspectRatio(1);
+                iv.setActualImageResource(bean);
 
-                Glide.with(mContext).load(bean).into(iv);
 
             }
 
