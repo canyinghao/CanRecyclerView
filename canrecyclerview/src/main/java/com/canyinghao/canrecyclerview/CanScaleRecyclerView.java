@@ -404,7 +404,7 @@ public class CanScaleRecyclerView extends RecyclerViewEmpty {
 
         try{
             if(isCanScale){
-                canvas.save(Canvas.ALL_SAVE_FLAG);
+                canvas.save();
                 if (mCurrentScaleFactor <= 1.0f) {
                     mOffsetX = 0.0f;
                     mOffsetY = 0.0f;

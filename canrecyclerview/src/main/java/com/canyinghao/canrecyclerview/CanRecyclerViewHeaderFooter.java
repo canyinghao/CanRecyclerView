@@ -269,20 +269,25 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
      */
     public void onScrollChanged() {
 
-        if (isHeader) {
-            boolean isVisibility = hasItems() && isFirstRowVisible();
+        try{
+            if (isHeader) {
+                boolean isVisibility = hasItems() && isFirstRowVisible();
 
-            translationXY(isVisibility);
-
-
-        } else {
-
-            boolean isVisibility = hasItems() && isLastRowVisible();
-
-            translationXY(isVisibility);
+                translationXY(isVisibility);
 
 
+            } else {
+
+                boolean isVisibility = hasItems() && isLastRowVisible();
+
+                translationXY(isVisibility);
+
+
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
         }
+
 
     }
 
@@ -293,31 +298,36 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
      * @param isVisibility boolean
      */
     private void translationXY(boolean isVisibility) {
-        setVisibility(isVisibility ? VISIBLE : INVISIBLE);
+        try{
+            setVisibility(isVisibility ? VISIBLE : INVISIBLE);
 
-        if (isVisibility) {
+            if (isVisibility) {
 
-            if (isLoadEnable && isLoadComplete && loadMoreListener != null) {
+                if (isLoadEnable && isLoadComplete && loadMoreListener != null) {
 
-                loadMoreListener.onLoadMore();
+                    loadMoreListener.onLoadMore();
 
-                isLoadComplete = false;
+                    isLoadComplete = false;
+                }
+
+
+                int first = calculateTranslation();
+                if (isVertical) {
+
+
+                    ViewHelper.setTranslationY(this, first);
+
+                } else {
+
+                    ViewHelper.setTranslationX(this, first);
+                }
+
+
             }
-
-
-            int first = calculateTranslation();
-            if (isVertical) {
-
-
-                ViewHelper.setTranslationY(this, first);
-
-            } else {
-
-                ViewHelper.setTranslationX(this, first);
-            }
-
-
+        }catch (Throwable e){
+            e.printStackTrace();
         }
+
     }
 
     /**
