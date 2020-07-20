@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.nineoldandroids.view.ViewHelper;
 
 import java.util.Arrays;
 
@@ -270,19 +269,23 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
      */
     public void onScrollChanged() {
 
-        if (isHeader) {
-            boolean isVisibility = hasItems() && isFirstRowVisible();
+        try {
+            if (isHeader) {
+                boolean isVisibility = hasItems() && isFirstRowVisible();
 
-            translationXY(isVisibility);
-
-
-        } else {
-
-            boolean isVisibility = hasItems() && isLastRowVisible();
-
-            translationXY(isVisibility);
+                translationXY(isVisibility);
 
 
+            } else {
+
+                boolean isVisibility = hasItems() && isLastRowVisible();
+
+                translationXY(isVisibility);
+
+
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
 
     }
@@ -310,11 +313,11 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
             if (isVertical) {
 
 
-                ViewHelper.setTranslationY(this, first);
+                setTranslationY(first);
 
             } else {
 
-                ViewHelper.setTranslationX(this, first);
+                setTranslationX(first);
             }
 
 
