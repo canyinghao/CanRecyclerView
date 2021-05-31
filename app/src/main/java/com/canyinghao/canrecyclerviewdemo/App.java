@@ -1,12 +1,12 @@
 package com.canyinghao.canrecyclerviewdemo;
 
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 
-public class App extends MultiDexApplication {
+public class App extends Application {
     private static App sInstance;
 
 
