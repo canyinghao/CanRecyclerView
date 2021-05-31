@@ -2,14 +2,12 @@ package com.canyinghao.canrecyclerviewdemo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 
 /**
  * Created by yangjian on 16/7/14.
@@ -18,20 +16,42 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    @BindView(R.id.toolbar)
+
     Toolbar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        toolbar = findViewById(R.id.toolbar);
+
+        findViewById(R.id.btn_header).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click(view);
+            }
+        });
+
+
+        findViewById(R.id.btn_viewpager).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click(view);
+            }
+        });
+
+
+        findViewById(R.id.btn_scale).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click(view);
+            }
+        });
 
         toolbar.setTitle("CanRecyclerView");
     }
 
 
 
-    @OnClick({R.id.btn_header,R.id.btn_viewpager,R.id.btn_scale})
     public void click(View v){
 
         switch (v.getId()){

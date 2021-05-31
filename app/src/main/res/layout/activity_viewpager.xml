@@ -1,16 +1,16 @@
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
     >
 
-<android.support.design.widget.AppBarLayout
+<com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -18,7 +18,7 @@ android:layout_height="match_parent"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_scrollFlags="scroll|enterAlways" />
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@ android:layout_height="match_parent"
         app:tabSelectedTextColor="@color/color_button"
         app:tabTextColor="@color/black2"/>
 
-</android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
 
 <com.canyinghao.canrecyclerview.CanRecyclerViewPager
@@ -45,4 +45,4 @@ android:layout_height="match_parent"
 
     android:clipToPadding="false"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

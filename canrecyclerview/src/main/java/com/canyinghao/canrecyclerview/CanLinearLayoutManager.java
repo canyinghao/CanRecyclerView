@@ -1,7 +1,9 @@
 package com.canyinghao.canrecyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 
 /**
  * Created by canyinghao on 15/12/17..

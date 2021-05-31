@@ -3,9 +3,6 @@ package com.canyinghao.canrecyclerviewdemo;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -19,21 +16,23 @@ import com.canyinghao.canrecyclerview.HorizontalDividerItemDecoration;
 import com.canyinghao.canrecyclerview.RecyclerViewEmpty;
 import com.canyinghao.canrecyclerview.VerticalDividerItemDecoration;
 import com.canyinghao.canrecyclerviewdemo.model.MainBean;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 
 
 public class ViewPagerActivity extends Activity {
 
-    @BindView(R.id.toolbar)
+
     Toolbar toolbar;
-    @BindView(R.id.tabLayout)
+
     TabLayout tabLayout;
-    @BindView(R.id.viewpager)
+
     CanRecyclerViewPager viewpager;
 
     Activity context;
@@ -42,7 +41,10 @@ public class ViewPagerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpager);
-        ButterKnife.bind(this);
+        toolbar = findViewById(R.id.toolbar);
+        tabLayout = findViewById(R.id.tabLayout);
+        viewpager = findViewById(R.id.viewpager);
+
         context = this;
         toolbar.setTitle(R.string.app_name);
 

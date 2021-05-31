@@ -1,18 +1,18 @@
 package com.canyinghao.canrecyclerview;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.nineoldandroids.view.ViewHelper;
 
 import java.util.Arrays;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * Created by canyinghao on 16/7/13.
@@ -269,7 +269,7 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
      */
     public void onScrollChanged() {
 
-        try{
+        try {
             if (isHeader) {
                 boolean isVisibility = hasItems() && isFirstRowVisible();
 
@@ -284,10 +284,9 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
 
 
             }
-        }catch (Throwable e){
+        } catch (Throwable e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -298,36 +297,31 @@ public class CanRecyclerViewHeaderFooter extends FrameLayout {
      * @param isVisibility boolean
      */
     private void translationXY(boolean isVisibility) {
-        try{
-            setVisibility(isVisibility ? VISIBLE : INVISIBLE);
+        setVisibility(isVisibility ? VISIBLE : INVISIBLE);
 
-            if (isVisibility) {
+        if (isVisibility) {
 
-                if (isLoadEnable && isLoadComplete && loadMoreListener != null) {
+            if (isLoadEnable && isLoadComplete && loadMoreListener != null) {
 
-                    loadMoreListener.onLoadMore();
+                loadMoreListener.onLoadMore();
 
-                    isLoadComplete = false;
-                }
-
-
-                int first = calculateTranslation();
-                if (isVertical) {
-
-
-                    ViewHelper.setTranslationY(this, first);
-
-                } else {
-
-                    ViewHelper.setTranslationX(this, first);
-                }
-
-
+                isLoadComplete = false;
             }
-        }catch (Throwable e){
-            e.printStackTrace();
-        }
 
+
+            int first = calculateTranslation();
+            if (isVertical) {
+
+
+                setTranslationY(first);
+
+            } else {
+
+                setTranslationX(first);
+            }
+
+
+        }
     }
 
     /**
