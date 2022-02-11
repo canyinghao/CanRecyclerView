@@ -402,7 +402,7 @@ public class CanRecyclerViewPager extends RecyclerView {
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
-        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0) {
+        if (this.mAdapter == null || this.mAdapter.getItemCount() <= 0||mCurrentView==null) {
             return;
         }
         switch (state) {
@@ -502,9 +502,11 @@ public class CanRecyclerViewPager extends RecyclerView {
 
 
     private int getFlingCountXY(int velocitx, int velocity) {
+        if(mCurrentView==null){
+            return 0;
+        }
 
         if (isHorizontally()) {
-
 
             return getFlingCount(velocitx, mCurrentView.getWidth());
         } else {
